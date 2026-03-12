@@ -52,8 +52,18 @@ class _CalendarPageState extends State<CalendarPage> {
 
     return Scaffold(
       appBar: AppBar(
-
+        title: const Text('Fasting Calendar'),
         actions: [
+          IconButton(
+            icon: const Icon(Icons.today),
+            tooltip: 'Today',
+            onPressed: () {
+              setState(() {
+                _focusedDay = DateTime.now();
+                _selectedDay = _focusedDay;
+              });
+            },
+          ),
           PopupMenuButton<String>(
             icon: const Icon(Icons.settings),
             onSelected: (value) {
@@ -144,7 +154,6 @@ class _CalendarPageState extends State<CalendarPage> {
 
   Widget _buildDayView(bool isDarkMode) {
     final dateToDisplay = _selectedDay ?? _focusedDay;
-    final fastType = fastingService.getFastingType(dateToDisplay);
     
     return Column(
       children: [
