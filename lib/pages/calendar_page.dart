@@ -1,3 +1,4 @@
+import 'package:fastingcalender/models/app_font.dart';
 import 'package:fastingcalender/models/fast_type.dart';
 import 'package:fastingcalender/services/fasting_service.dart';
 import 'package:fastingcalender/services/theme_service.dart';
@@ -74,6 +75,10 @@ class _CalendarPageState extends State<CalendarPage> {
                   themeService.setThemeMode(ThemeMode.light);
                 case 'theme_dark':
                   themeService.setThemeMode(ThemeMode.dark);
+                case 'font_sans':
+                  themeService.setFont(AppFont.sans);
+                case 'font_serif':
+                  themeService.setFont(AppFont.serif);
               }
             },
             itemBuilder: (context) => [
@@ -84,6 +89,13 @@ class _CalendarPageState extends State<CalendarPage> {
               const PopupMenuItem(value: 'theme_system', child: Text('Device Default')),
               const PopupMenuItem(value: 'theme_light', child: Text('Light Mode')),
               const PopupMenuItem(value: 'theme_dark', child: Text('Dark Mode')),
+              const PopupMenuDivider(),
+              const PopupMenuItem(
+                enabled: false,
+                child: Text('Font', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              ),
+              const PopupMenuItem(value: 'font_sans', child: Text('Noto Sans')),
+              const PopupMenuItem(value: 'font_serif', child: Text('Noto Serif')),
             ],
           ),
         ],
