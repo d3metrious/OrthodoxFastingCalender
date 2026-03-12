@@ -143,7 +143,7 @@ class _CalendarPageState extends State<CalendarPage> {
             // Modern styling for the bottom bar
             elevation: 0,
             backgroundColor: isDarkMode ? AppColors.fastingBackgroundDark : AppColors.fastingBackgroundLight,
-            selectedItemColor: AppColors.primary,
+            selectedItemColor: isDarkMode ? AppColors.primary : AppColors.fastingBackgroundDark,
             unselectedItemColor: isDarkMode ? Colors.white54 : Colors.black54,
             items: [
               BottomNavigationBarItem(
@@ -294,7 +294,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
     if (isSelected) {
       border = Border.all(
-        color: AppColors.primary,
+        color: isDarkMode ? AppColors.primary : AppColors.fastingBackgroundDark,
         width: 2.0,
       );
     }
