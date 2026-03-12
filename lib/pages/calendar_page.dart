@@ -1,7 +1,9 @@
 import 'package:fastingcalender/models/app_font.dart';
+import 'package:fastingcalender/models/app_language.dart';
 import 'package:fastingcalender/models/fast_type.dart';
 import 'package:fastingcalender/services/fasting_service.dart';
 import 'package:fastingcalender/services/theme_service.dart';
+import 'package:fastingcalender/services/language_service.dart';
 import 'package:fastingcalender/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -67,17 +69,15 @@ class _CalendarPageState extends State<CalendarPage> {
           PopupMenuButton<String>(
             icon: const Icon(Icons.settings),
             onSelected: (value) {
-              switch (value) {
-                case 'theme_system':
-                  themeService.setThemeMode(ThemeMode.system);
-                case 'theme_light':
-                  themeService.setThemeMode(ThemeMode.light);
-                case 'theme_dark':
-                  themeService.setThemeMode(ThemeMode.dark);
-                case 'font_sans':
-                  themeService.setFont(AppFont.sans);
-                case 'font_serif':
-                  themeService.setFont(AppFont.serif);
+              if (value.startsWith('theme_')) {
+                final mode = ThemeMode.values.firstWhere((e) => e.name == value.substring(6));
+                themeService.setThemeMode(mode);
+              } else if (value.startsWith('font_')) {
+                final font = AppFont.values.firstWhere((e) => e.name == value.substring(5));
+                themeService.setFont(font);
+              } else if (value.startsWith('lang_')) {
+                final lang = AppLanguage.values.firstWhere((e) => e.name == value.substring(5));
+                languageService.setLanguage(lang);
               }
             },
             itemBuilder: (context) => [
@@ -85,16 +85,28 @@ class _CalendarPageState extends State<CalendarPage> {
                 enabled: false,
                 child: Text('Theme', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
               ),
-              const PopupMenuItem(value: 'theme_system', child: Text('Device Default')),
-              const PopupMenuItem(value: 'theme_light', child: Text('Light Mode')),
-              const PopupMenuItem(value: 'theme_dark', child: Text('Dark Mode')),
+              ...ThemeMode.values.map((mode) => PopupMenuItem(
+                    value: 'theme_${mode.name}',
+                    child: Text(mode.name[0].toUpperCase() + mode.name.substring(1)),
+                  )),
               const PopupMenuDivider(),
               const PopupMenuItem(
                 enabled: false,
                 child: Text('Font', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
               ),
-              const PopupMenuItem(value: 'font_sans', child: Text('Noto Sans')),
-              const PopupMenuItem(value: 'font_serif', child: Text('Noto Serif')),
+              ...AppFont.values.map((font) => PopupMenuItem(
+                    value: 'font_${font.name}',
+                    child: Text(font.displayName),
+                  )),
+              const PopupMenuDivider(),
+              const PopupMenuItem(
+                enabled: false,
+                child: Text('Language', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              ),
+              ...AppLanguage.values.map((lang) => PopupMenuItem(
+                    value: 'lang_${lang.name}',
+                    child: Text(lang.displayName),
+                  )),
             ],
           ),
         ],
@@ -131,6 +143,7 @@ class _CalendarPageState extends State<CalendarPage> {
           firstDay: DateTime.utc(2020, 1, 1),
           lastDay: DateTime.utc(2030, 12, 31),
           focusedDay: _focusedDay,
+          locale: languageService.language.languageCode,
           headerStyle: const HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,
@@ -189,11 +202,11 @@ class _CalendarPageState extends State<CalendarPage> {
               Column(
                 children: [
                   Text(
-                    DateFormat('EEEE').format(dateToDisplay),
+                    DateFormat('EEEE', languageService.language.languageCode).format(dateToDisplay),
                     style: Theme.of(context).textTheme.titleLarge,
                   ),
                   Text(
-                    DateFormat('MMMM d, yyyy').format(dateToDisplay),
+                    DateFormat('MMMM d, yyyy', languageService.language.languageCode).format(dateToDisplay),
                     style: Theme.of(context).textTheme.bodyMedium,
                   ),
                 ],
