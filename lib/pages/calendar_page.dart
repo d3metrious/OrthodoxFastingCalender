@@ -237,16 +237,14 @@ class _CalendarPageState extends State<CalendarPage> {
       bgColor = AppColors.primary;
       textColor = Colors.white;
     } else if (fastType != null) {
-      bgColor = fastType.color.withOpacity(0.35);
+      bgColor = fastType.color.withOpacity(isDarkMode ? 0.5 : 0.35);
       textColor = isDarkMode ? Colors.white : Colors.black;
     } else if (isToday) {
       bgColor = AppColors.primary.withOpacity(0.25);
       textColor = isDarkMode ? Colors.white : Colors.black;
     } else {
       bgColor = null;
-      textColor = isWeekend
-          ? (isDarkMode ? Colors.white70 : Colors.black54)
-          : (isDarkMode ? Colors.white : Colors.black);
+      textColor = (isDarkMode ? Colors.white : Colors.black);
     }
 
     return Container(

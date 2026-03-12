@@ -7,7 +7,7 @@ class AppColors {
 
   // ── Fast type colors ─────────────────────────────────────────────────────
   static const Color fastStrict     = Color(0xFFe94f37);
-  static const Color fastWineAndOil = Color(0xFFa76571);
+  static const Color fastWineAndOil = Color(0xFFe0acd5);
   static const Color fastFishOilWine = Color(0xFF3f88c5);
   static const Color fastDairy      = Color(0xFFe9c46a);
 
