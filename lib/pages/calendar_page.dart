@@ -235,7 +235,7 @@ class _CalendarPageState extends State<CalendarPage> {
     BoxBorder? border;
 
     if (fastType != null) {
-      bgColor = fastType.color.withOpacity(isDarkMode ? 0.5 : 0.35);
+      bgColor = fastType.color.withOpacity(isDarkMode ? 0.9 : 0.35);
     } else if (isToday) {
       bgColor = AppColors.primary.withOpacity(0.25);
     }

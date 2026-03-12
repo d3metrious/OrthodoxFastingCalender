@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 class AppColors {
   // ── Brand ────────────────────────────────────────────────────────────────
-  static const Color primary = Colors.deepPurple;
+  static const Color primary = Color(0xFFe9c46a);
   static const Color accent  = Colors.orange;
 
   // ── Fast type colors ─────────────────────────────────────────────────────
