@@ -4,6 +4,7 @@ import 'package:fastingcalender/services/theme_service.dart';
 import 'package:fastingcalender/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
+import 'package:intl/intl.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -15,85 +16,183 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
+  int _currentIndex = 0;
+  late PageController _pageController;
+
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController(initialPage: _currentIndex);
+    _selectedDay = _focusedDay;
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  void _onPageChanged(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
+
+  void _onTabTapped(int index) {
+    _pageController.animateToPage(
+      index,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: SafeArea(
-        child: Column(
-          children: [
-            // Settings bar
-            Align(
-              alignment: Alignment.centerRight,
-              child: PopupMenuButton<String>(
-                icon: const Icon(Icons.settings),
-                tooltip: 'Settings',
-                onSelected: (value) {
-                  switch (value) {
-                    case 'theme_system':
-                      themeService.setThemeMode(ThemeMode.system);
-                    case 'theme_light':
-                      themeService.setThemeMode(ThemeMode.light);
-                    case 'theme_dark':
-                      themeService.setThemeMode(ThemeMode.dark);
-                  }
+      appBar: AppBar(
+        title: const Text('Fasting Calendar'),
+        actions: [
+          PopupMenuButton<String>(
+            icon: const Icon(Icons.settings),
+            onSelected: (value) {
+              switch (value) {
+                case 'theme_system':
+                  themeService.setThemeMode(ThemeMode.system);
+                case 'theme_light':
+                  themeService.setThemeMode(ThemeMode.light);
+                case 'theme_dark':
+                  themeService.setThemeMode(ThemeMode.dark);
+              }
+            },
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                enabled: false,
+                child: Text('Theme', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              ),
+              const PopupMenuItem(value: 'theme_system', child: Text('Device Default')),
+              const PopupMenuItem(value: 'theme_light', child: Text('Light Mode')),
+              const PopupMenuItem(value: 'theme_dark', child: Text('Dark Mode')),
+            ],
+          ),
+        ],
+      ),
+      body: PageView(
+        controller: _pageController,
+        onPageChanged: _onPageChanged,
+        children: [
+          _buildMonthView(isDarkMode),
+          _buildDayView(isDarkMode),
+        ],
+      ),
+      bottomNavigationBar: BottomNavigationBar(
+        currentIndex: _currentIndex,
+        onTap: _onTabTapped,
+        items: const [
+          BottomNavigationBarItem(
+            icon: Icon(Icons.calendar_month),
+            label: 'Month',
+          ),
+          BottomNavigationBarItem(
+            icon: Icon(Icons.today),
+            label: 'Day',
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildMonthView(bool isDarkMode) {
+    return Column(
+      children: [
+        TableCalendar(
+          firstDay: DateTime.utc(2020, 1, 1),
+          lastDay: DateTime.utc(2030, 12, 31),
+          focusedDay: _focusedDay,
+          selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
+          onDaySelected: (selectedDay, focusedDay) {
+            setState(() {
+              _selectedDay = selectedDay;
+              _focusedDay = focusedDay;
+            });
+          },
+          calendarStyle: const CalendarStyle(markersMaxCount: 0),
+          calendarBuilders: CalendarBuilders(
+            defaultBuilder: (context, day, focusedDay) => _buildDayCell(
+              day,
+              isDarkMode,
+              isWeekend: day.weekday == DateTime.saturday || day.weekday == DateTime.sunday,
+            ),
+            todayBuilder: (context, day, focusedDay) =>
+                _buildDayCell(day, isDarkMode, isToday: true),
+            selectedBuilder: (context, day, focusedDay) =>
+                _buildDayCell(day, isDarkMode, isSelected: true),
+          ),
+        ),
+        const SizedBox(height: 20),
+        _buildLegend(),
+        const SizedBox(height: 12),
+        Expanded(
+          child: SingleChildScrollView(
+            child: _buildInfoCard(isDarkMode, _selectedDay),
+          ),
+        ),
+      ],
+    );
+  }
+
+  Widget _buildDayView(bool isDarkMode) {
+    final dateToDisplay = _selectedDay ?? _focusedDay;
+    final fastType = fastingService.getFastingType(dateToDisplay);
+    
+    return Column(
+      children: [
+        Padding(
+          padding: const EdgeInsets.all(16.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              IconButton(
+                icon: const Icon(Icons.chevron_left),
+                onPressed: () {
+                  setState(() {
+                    _selectedDay = dateToDisplay.subtract(const Duration(days: 1));
+                    _focusedDay = _selectedDay!;
+                  });
                 },
-                itemBuilder: (context) => [
-                  const PopupMenuItem(
-                    enabled: false,
-                    child: Text('Theme', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+              ),
+              Column(
+                children: [
+                  Text(
+                    DateFormat('EEEE').format(dateToDisplay),
+                    style: Theme.of(context).textTheme.titleLarge,
                   ),
-                  const PopupMenuItem(value: 'theme_system', child: Text('Device Default')),
-                  const PopupMenuItem(value: 'theme_light', child: Text('Light Mode')),
-                  const PopupMenuItem(value: 'theme_dark', child: Text('Dark Mode')),
+                  Text(
+                    DateFormat('MMMM d, yyyy').format(dateToDisplay),
+                    style: Theme.of(context).textTheme.bodyMedium,
+                  ),
                 ],
               ),
-            ),
-            TableCalendar(
-              firstDay: DateTime.utc(2020, 1, 1),
-              lastDay: DateTime.utc(2030, 12, 31),
-              focusedDay: _focusedDay,
-              selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
-              onDaySelected: (selectedDay, focusedDay) {
-                setState(() {
-                  _selectedDay = selectedDay;
-                  _focusedDay = focusedDay;
-                });
-              },
-              eventLoader: (day) {
-                final fast = fastingService.getFastingType(day);
-                return fast != null ? [fast] : [];
-              },
-              calendarStyle: CalendarStyle(
-                markersMaxCount: 0,
-                defaultTextStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
-                weekendTextStyle: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
+              IconButton(
+                icon: const Icon(Icons.chevron_right),
+                onPressed: () {
+                  setState(() {
+                    _selectedDay = dateToDisplay.add(const Duration(days: 1));
+                    _focusedDay = _selectedDay!;
+                  });
+                },
               ),
-              calendarBuilders: CalendarBuilders(
-                defaultBuilder: (context, day, focusedDay) => _buildDayCell(
-                  day, isDarkMode,
-                  isWeekend: day.weekday == DateTime.saturday || day.weekday == DateTime.sunday,
-                ),
-                todayBuilder: (context, day, focusedDay) =>
-                    _buildDayCell(day, isDarkMode, isToday: true),
-                selectedBuilder: (context, day, focusedDay) =>
-                    _buildDayCell(day, isDarkMode, isSelected: true),
-              ),
-            ),
-            const SizedBox(height: 20),
-            // Legend
-            _buildLegend(),
-            const SizedBox(height: 12),
-            Expanded(
-              child: Center(
-                child: _buildInfoCard(isDarkMode),
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
-      ),
+        const Divider(),
+        Expanded(
+          child: Center(
+            child: _buildInfoCard(isDarkMode, dateToDisplay, expanded: true),
+          ),
+        ),
+      ],
     );
   }
 
@@ -162,36 +261,72 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  Widget _buildInfoCard(bool isDarkMode) {
-    if (_selectedDay == null) {
+  Widget _buildInfoCard(bool isDarkMode, DateTime? day, {bool expanded = false}) {
+    if (day == null) {
       return const Text('Select a day to see fasting details.');
     }
 
-    final fastType = fastingService.getFastingType(_selectedDay!);
+    final fastType = fastingService.getFastingType(day);
     if (fastType != null) {
-      return Card(
-        color: fastType.color.withOpacity(isDarkMode ? 0.25 : 0.15),
-        margin: const EdgeInsets.all(16),
-        child: Padding(
-          padding: const EdgeInsets.all(16.0),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Icon(Icons.restaurant_menu, color: fastType.color),
-              const SizedBox(height: 8),
-              Text(
-                fastType.label,
-                style: Theme.of(context).textTheme.headlineSmall,
-                textAlign: TextAlign.center,
+      return Padding(
+        padding: const EdgeInsets.all(16.0),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(
+              Icons.restaurant_menu, 
+              color: fastType.color, 
+              size: expanded ? 80 : 40
+            ),
+            const SizedBox(height: 16),
+            Text(
+              fastType.label,
+              style: expanded 
+                ? Theme.of(context).textTheme.headlineMedium?.copyWith(color: fastType.color)
+                : Theme.of(context).textTheme.headlineSmall,
+              textAlign: TextAlign.center,
+            ),
+            const SizedBox(height: 12),
+            Text(
+              fastType.description, 
+              textAlign: TextAlign.center,
+              style: expanded ? Theme.of(context).textTheme.titleMedium : null,
+            ),
+            if (expanded) ...[
+              const SizedBox(height: 40),
+              const Text(
+                'Fasting Rules',
+                style: TextStyle(fontWeight: FontWeight.bold),
               ),
-              const SizedBox(height: 8),
-              Text(fastType.description, textAlign: TextAlign.center),
-            ],
-          ),
+              const Padding(
+                padding: EdgeInsets.all(8.0),
+                child: Text(
+                  'On this day, the faithful are encouraged to observe the traditional fasting guidelines according to their tradition.',
+                  textAlign: TextAlign.center,
+                ),
+              ),
+            ]
+          ],
         ),
       );
     }
 
-    return const Text('No fasting today.', style: TextStyle(color: AppColors.noFastingText));
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      children: [
+        Icon(
+          Icons.celebration, 
+          color: Colors.green, 
+          size: expanded ? 80 : 40
+        ),
+        const SizedBox(height: 16),
+        const Text(
+          'No Fasting',
+          style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+        ),
+        const SizedBox(height: 8),
+        const Text('Standard foods are permitted today.'),
+      ],
+    );
   }
 }
