@@ -1,30 +1,26 @@
+import 'package:fastingcalender/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 
 enum FastType {
   strictFast(
     label: 'Strict Fast',
     description: 'Refrain from meat, fish, oil, wine, dairy, and eggs.',
-    color: Colors.red,
+    color: AppColors.fastStrict,
   ),
   wineAndOil(
     label: 'Wine & Oil',
     description: 'Wine and oil are allowed. Refrain from meat, fish, dairy, and eggs.',
-    color: Colors.purple,
+    color: AppColors.fastWineAndOil,
   ),
   fishOilWine(
     label: 'Fish, Oil & Wine',
     description: 'Fish, oil and wine are allowed. Refrain from meat, dairy and eggs.',
-    color: Colors.blue,
+    color: AppColors.fastFishOilWine,
   ),
   dairyAllowed(
     label: 'Dairy Allowed',
     description: 'Dairy, eggs, fish, oil and wine are allowed. Refrain from meat.',
-    color: Colors.orange,
-  ),
-  abstainMeat(
-    label: 'Abstain from Meat',
-    description: 'Refrain from meat only.',
-    color: Colors.yellow,
+    color: AppColors.fastDairy,
   );
 
   const FastType({

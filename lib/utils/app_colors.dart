@@ -1,17 +1,20 @@
 import 'package:flutter/material.dart';
 
 class AppColors {
-  // Brand Colors
+  // ── Brand ────────────────────────────────────────────────────────────────
   static const Color primary = Colors.deepPurple;
-  static const Color accent = Colors.orange;
+  static const Color accent  = Colors.orange;
 
-  // Fasting Specific Colors (Light Mode)
-  static const Color fastingBackgroundLight = Color(0xFFFFF3E0);
-  static const Color fastingMarker = Colors.orange;
+  // ── Fast type colors ─────────────────────────────────────────────────────
+  static const Color fastStrict     = Color(0xFFe94f37);
+  static const Color fastWineAndOil = Color(0xFFa76571);
+  static const Color fastFishOilWine = Color(0xFF3f88c5);
+  static const Color fastDairy      = Color(0xFFe9c46a);
 
-  // Fasting Specific Colors (Dark Mode)
-  static const Color fastingBackgroundDark = Color(0xFF3E2723); // Dark brown/orange
-  
-  // Neutral Colors
+  // ── Calendar ─────────────────────────────────────────────────────────────
+  static const Color fastingBackgroundLight = Color(0xFFEDEDED);
+  static const Color fastingBackgroundDark  = Color(0xFF121212);
+
+  // ── Neutral ──────────────────────────────────────────────────────────────
   static const Color noFastingText = Colors.grey;
 }
