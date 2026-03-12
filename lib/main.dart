@@ -1,3 +1,4 @@
+import 'package:fastingcalender/models/app_font.dart';
 import 'package:fastingcalender/pages/calendar_page.dart';
 import 'package:fastingcalender/services/fasting_service.dart';
 import 'package:fastingcalender/services/theme_service.dart';
@@ -26,6 +27,14 @@ class FastingCalendarApp extends StatelessWidget {
         return ListenableBuilder(
           listenable: fastingService,
           builder: (context, child) {
+            final TextTheme textTheme = themeService.appFont == AppFont.serif
+                ? GoogleFonts.notoSerifTextTheme()
+                : GoogleFonts.notoSansTextTheme();
+
+            final TextTheme darkTextTheme = themeService.appFont == AppFont.serif
+                ? GoogleFonts.notoSerifTextTheme(ThemeData(brightness: Brightness.dark).textTheme)
+                : GoogleFonts.notoSansTextTheme(ThemeData(brightness: Brightness.dark).textTheme);
+
             return MaterialApp(
               title: 'Church Fasting Calendar',
               theme: ThemeData(
@@ -34,7 +43,7 @@ class FastingCalendarApp extends StatelessWidget {
                   brightness: Brightness.light,
                 ),
                 useMaterial3: true,
-                textTheme: GoogleFonts.notoSerifTextTheme(),
+                textTheme: textTheme,
               ),
               darkTheme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(
@@ -42,9 +51,7 @@ class FastingCalendarApp extends StatelessWidget {
                   brightness: Brightness.dark,
                 ),
                 useMaterial3: true,
-                textTheme: GoogleFonts.notoSerifTextTheme(
-                  ThemeData(brightness: Brightness.dark).textTheme,
-                ),
+                textTheme: darkTextTheme,
               ),
               themeMode: themeService.themeMode,
               home: const CalendarPage(),
