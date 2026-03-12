@@ -21,7 +21,7 @@ enum AppLanguage {
     switch (this) {
       case AppLanguage.english: return 'en';
       case AppLanguage.greek: return 'el';
-      case AppLanguage.churchSlavonic: return 'cu';
+      case AppLanguage.churchSlavonic: return 'ru'; // Using 'ru' as a supported fallback for Slavonic
       case AppLanguage.arabic: return 'ar';
       case AppLanguage.ethiopian: return 'am';
     }
