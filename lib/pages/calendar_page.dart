@@ -127,7 +127,7 @@ class _CalendarPageState extends State<CalendarPage> {
           body: PageView(
             controller: _pageController,
             onPageChanged: _onPageChanged,
-            physics: const ClampingScrollPhysics(), // Better interaction with calendar swipes
+            physics: const ClampingScrollPhysics(),
             children: [
               _buildMonthView(isDarkMode, s, safeLocale),
               _buildDayView(isDarkMode, s, safeLocale),
@@ -164,7 +164,7 @@ class _CalendarPageState extends State<CalendarPage> {
             formatButtonVisible: false,
             titleCentered: true,
           ),
-          availableGestures: AvailableGestures.horizontalSwipe, // Explicitly allow horizontal swipes for month changes
+          availableGestures: AvailableGestures.horizontalSwipe,
           onPageChanged: (focusedDay) {
             setState(() {
               _focusedDay = focusedDay;
@@ -309,14 +309,7 @@ class _CalendarPageState extends State<CalendarPage> {
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Container(
-                width: 12,
-                height: 12,
-                decoration: BoxDecoration(
-                  color: type.color.withOpacity(0.75),
-                  borderRadius: BorderRadius.circular(3),
-                ),
-              ),
+              Icon(type.icon, size: 12, color: type.color), // Using custom icon
               const SizedBox(width: 4),
               Text(
                 Translations.getFastLabel(type, languageService.language), 
@@ -342,7 +335,7 @@ class _CalendarPageState extends State<CalendarPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              Icons.restaurant_menu, 
+              fastType.icon, // Using custom icon
               color: fastType.color, 
               size: expanded ? 80 : 40
             ),
