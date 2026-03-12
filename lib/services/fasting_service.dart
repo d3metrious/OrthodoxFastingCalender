@@ -104,7 +104,7 @@ class FastingService extends ChangeNotifier {
     final int month = (d + e + 114) ~/ 31;
     final int day   = (d + e + 114) % 31 + 1;
     final int offset = (year ~/ 100) - (year ~/ 400) - 2; // valid any century
-    return _shift(DateTime(year, month, day), offset);
+    return DateTime(year, month, day + offset); // calendar arithmetic — DST-safe
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
@@ -232,16 +232,12 @@ class FastingService extends ChangeNotifier {
   // Helpers
   // ═══════════════════════════════════════════════════════════════════════════
 
-  /// Shift [base] by [days] (positive = forward, negative = backward) and
-  /// normalise to midnight.  Using DateTime constructor arithmetic instead of
-  /// Duration avoids DST-related hour-shifts that can push a date to the wrong
-  /// calendar day when DST boundaries fall between [base] and the target.
-  DateTime _shift(DateTime base, int days) {
-    final result = days >= 0
-        ? base.add(Duration(days: days))
-        : base.subtract(Duration(days: -days));
-    return _dateOnly(result);
-  }
+  /// Shift [base] by [days] calendar days (positive = forward, negative = backward).
+  /// Uses DateTime constructor overflow arithmetic — completely DST-safe because
+  /// no seconds are involved, only year/month/day fields.
+  /// e.g. DateTime(2026, 4, 12 - 48) → Dart normalises to DateTime(2026, 2, 23).
+  DateTime _shift(DateTime base, int days) =>
+      DateTime(base.year, base.month, base.day + days);
 
   /// Strip any time component, keeping only the calendar date.
   DateTime _dateOnly(DateTime dt) => DateTime(dt.year, dt.month, dt.day);
