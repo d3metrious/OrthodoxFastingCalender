@@ -231,29 +231,37 @@ class _CalendarPageState extends State<CalendarPage> {
     final fastType = fastingService.getFastingType(day);
 
     Color? bgColor;
-    Color textColor;
+    Color textColor = isDarkMode ? Colors.white : Colors.black;
+    BoxBorder? border;
 
-    if (isSelected) {
-      bgColor = AppColors.primary;
-      textColor = Colors.white;
-    } else if (fastType != null) {
+    if (fastType != null) {
       bgColor = fastType.color.withOpacity(isDarkMode ? 0.5 : 0.35);
-      textColor = isDarkMode ? Colors.white : Colors.black;
     } else if (isToday) {
       bgColor = AppColors.primary.withOpacity(0.25);
-      textColor = isDarkMode ? Colors.white : Colors.black;
-    } else {
-      bgColor = null;
-      textColor = (isDarkMode ? Colors.white : Colors.black);
+    }
+
+    if (isSelected) {
+      border = Border.all(
+        color: AppColors.primary,
+        width: 2.0,
+      );
     }
 
     return Container(
       margin: const EdgeInsets.all(4),
-      decoration: bgColor != null
-          ? BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(6))
-          : null,
+      decoration: BoxDecoration(
+        color: bgColor,
+        borderRadius: BorderRadius.circular(6),
+        border: border,
+      ),
       alignment: Alignment.center,
-      child: Text('${day.day}', style: TextStyle(color: textColor)),
+      child: Text(
+        '${day.day}', 
+        style: TextStyle(
+          color: textColor,
+          fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
+        )
+      ),
     );
   }
 
