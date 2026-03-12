@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import '../services/fasting_service.dart';
+import '../services/theme_service.dart';
+import '../utils/app_colors.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -15,10 +17,33 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
+
     return Scaffold(
       appBar: AppBar(
         title: const Text('Church Fasting Calendar'),
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+        backgroundColor: AppColors.primary.withOpacity(0.1),
+        actions: [
+          // A simple dropdown to change the theme
+          PopupMenuButton<ThemeMode>(
+            icon: const Icon(Icons.palette),
+            onSelected: (mode) => themeService.setThemeMode(mode),
+            itemBuilder: (context) => [
+              const PopupMenuItem(
+                value: ThemeMode.system,
+                child: Text('Device Default'),
+              ),
+              const PopupMenuItem(
+                value: ThemeMode.light,
+                child: Text('Light Mode'),
+              ),
+              const PopupMenuItem(
+                value: ThemeMode.dark,
+                child: Text('Dark Mode'),
+              ),
+            ],
+          ),
+        ],
       ),
       body: Column(
         children: [
@@ -37,17 +62,23 @@ class _CalendarPageState extends State<CalendarPage> {
               final fast = FastingService.getFastingType(day);
               return fast != null ? [fast] : [];
             },
-            calendarStyle: const CalendarStyle(
-              markerDecoration: BoxDecoration(
-                color: Colors.orange,
+            calendarStyle: CalendarStyle(
+              markerDecoration: const BoxDecoration(
+                color: AppColors.fastingMarker,
                 shape: BoxShape.circle,
+              ),
+              defaultTextStyle: TextStyle(
+                color: isDarkMode ? Colors.white : Colors.black,
+              ),
+              weekendTextStyle: TextStyle(
+                color: isDarkMode ? Colors.white70 : Colors.black54,
               ),
             ),
           ),
           const SizedBox(height: 20),
           Expanded(
             child: Center(
-              child: _buildInfoCard(),
+              child: _buildInfoCard(isDarkMode),
             ),
           ),
         ],
@@ -55,7 +86,7 @@ class _CalendarPageState extends State<CalendarPage> {
     );
   }
 
-  Widget _buildInfoCard() {
+  Widget _buildInfoCard(bool isDarkMode) {
     if (_selectedDay == null) {
       return const Text('Select a day to see fasting details.');
     }
@@ -63,14 +94,16 @@ class _CalendarPageState extends State<CalendarPage> {
     final fastType = FastingService.getFastingType(_selectedDay!);
     if (fastType != null) {
       return Card(
-        color: Colors.orange.shade50,
+        color: isDarkMode 
+            ? AppColors.fastingBackgroundDark 
+            : AppColors.fastingBackgroundLight,
         margin: const EdgeInsets.all(16),
         child: Padding(
           padding: const EdgeInsets.all(16.0),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
-              const Icon(Icons.restaurant_menu, color: Colors.orange),
+              const Icon(Icons.restaurant_menu, color: AppColors.accent),
               const SizedBox(height: 8),
               Text(
                 fastType,
@@ -83,6 +116,9 @@ class _CalendarPageState extends State<CalendarPage> {
       );
     }
 
-    return const Text('No fasting today.');
+    return const Text(
+      'No fasting today.',
+      style: TextStyle(color: AppColors.noFastingText),
+    );
   }
 }
