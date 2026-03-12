@@ -1,95 +1,124 @@
 import '../models/app_language.dart';
 import '../models/fast_type.dart';
 
-class Translations {
-  static String get(String key, AppLanguage lang) {
-    final Map<AppLanguage, Map<String, String>> _data = {
-      AppLanguage.english: {
-        'today': 'Today',
-        'settings': 'Settings',
-        'theme': 'Theme',
-        'light': 'Light Mode',
-        'dark': 'Dark Mode',
-        'system': 'Device Default',
-        'font': 'Font',
-        'language': 'Language',
-        'month': 'Month',
-        'day': 'Day',
-        'select_day': 'Select a day to see fasting details.',
-        'no_fasting': 'No Fasting',
-        'no_fasting_desc': 'Standard foods are permitted today.',
-        'fasting_rules': 'Fasting Rules',
-        'fasting_encouragement': 'On this day, the faithful are encouraged to observe the traditional fasting guidelines according to their tradition.',
-        'strict_fast_label': 'Strict Fast',
-        'strict_fast_desc': 'Refrain from meat, fish, oil, wine, dairy, and eggs.',
-        'wine_oil_label': 'Wine & Oil',
-        'wine_oil_desc': 'Wine and oil are allowed. Refrain from meat, fish, dairy, and eggs.',
-        'fish_oil_wine_label': 'Fish, Oil & Wine',
-        'fish_oil_wine_desc': 'Fish, oil and wine are allowed. Refrain from meat, dairy and eggs.',
-        'dairy_allowed_label': 'Dairy Allowed',
-        'dairy_allowed_desc': 'Dairy, eggs, fish, oil and wine are allowed. Refrain from meat.',
-      },
-      AppLanguage.greek: {
-        'today': 'Σήμερα',
-        'settings': 'Ρυθμίσεις',
-        'theme': 'Θέμα',
-        'light': 'Φωτεινό',
-        'dark': 'Σκούρο',
-        'system': 'Προεπιλογή συστήματος',
-        'font': 'Γραμματοσειρά',
-        'language': 'Γλώσσα',
-        'month': 'Μήνας',
-        'day': 'Ημέρα',
-        'select_day': 'Επιλέξτε μια ημέρα για λεπτομέρειες νηστείας.',
-        'no_fasting': 'Κατάλυση',
-        'no_fasting_desc': 'Επιτρέπονται όλες οι τροφές σήμερα.',
-        'fasting_rules': 'Κανόνες Νηστείας',
-        'fasting_encouragement': 'Αυτήν την ημέρα, οι πιστοί ενθαρρύνονται να τηρούν τις παραδοσιακές οδηγίες νηστείας σύμφωνα με την παράδοσή τους.',
-        'strict_fast_label': 'Αυστηρή Νηστεία',
-        'strict_fast_desc': 'Αποχή από κρέας, ψάρι, λάδι, κρασί, γαλακτοκομικά και αυγά.',
-        'wine_oil_label': 'Οίνος και Έλαιο',
-        'wine_oil_desc': 'Επιτρέπεται το κρασί και το λάδι. Αποχή από κρέας, ψάρι, γαλακτοκομικά και αυγά.',
-        'fish_oil_wine_label': 'Ιχθύς, Οίνος και Έλαιο',
-        'fish_oil_wine_desc': 'Επιτρέπεται το ψάρι, το κρασί και το λάδι. Αποχή από κρέας, γαλακτοκομικά και αυγά.',
-        'dairy_allowed_label': 'Κατάλυση Τυρού',
-        'dairy_allowed_desc': 'Επιτρέπονται γαλακτοκομικά, αυγά, ψάρι, λάδι και κρασί. Αποχή από κρέας.',
-      },
-      // Placeholder translations for other languages
-      AppLanguage.churchSlavonic: {
-        'today': 'Днесь',
-        'settings': 'Настройки',
-        'strict_fast_label': 'Строгій постъ',
-      },
-      AppLanguage.arabic: {
-        'today': 'اليوم',
-        'settings': 'الإعدادات',
-        'strict_fast_label': 'صوم انقطاعي',
-      },
-      AppLanguage.ethiopian: {
-        'today': 'ዛሬ',
-        'settings': 'ቅንጅቶች',
-        'strict_fast_label': 'አጽዋማት',
-      },
-    };
+/// Base class (English) acts as the fallback for all other languages
+class AppStrings {
+  String get today => 'Today';
+  String get settings => 'Settings';
+  String get theme => 'Theme';
+  String get light => 'Light Mode';
+  String get dark => 'Dark Mode';
+  String get system => 'Device Default';
+  String get font => 'Font';
+  String get language => 'Language';
+  String get month => 'Month';
+  String get day => 'Day';
+  String get selectDay => 'Select a day to see fasting details.';
+  String get noFasting => 'No Fasting';
+  String get noFastingDesc => 'Standard foods are permitted today.';
+  String get fastingRules => 'Fasting Rules';
+  String get fastingEncouragement => 
+      'On this day, the faithful are encouraged to observe the traditional fasting guidelines according to their tradition.';
 
-    return _data[lang]?[key] ?? _data[AppLanguage.english]![key]!;
+  // Fasting Labels
+  String get strictFastLabel => 'Strict Fast';
+  String get wineOilLabel => 'Wine & Oil';
+  String get fishOilWineLabel => 'Fish, Oil & Wine';
+  String get dairyAllowedLabel => 'Dairy Allowed';
+
+  // Fasting Descriptions
+  String get strictFastDesc => 'Refrain from meat, fish, oil, wine, dairy, and eggs.';
+  String get wineOilDesc => 'Wine and oil are allowed. Refrain from meat, fish, dairy, and eggs.';
+  String get fishOilWineDesc => 'Fish, oil and wine are allowed. Refrain from meat, dairy and eggs.';
+  String get dairyAllowedDesc => 'Dairy, eggs, fish, oil and wine are allowed. Refrain from meat.';
+}
+
+/// Greek Overrides
+class GreekStrings extends AppStrings {
+  @override String get today => 'Σήμερα';
+  @override String get settings => 'Ρυθμίσεις';
+  @override String get theme => 'Θέμα';
+  @override String get light => 'Φωτεινό';
+  @override String get dark => 'Σκούρο';
+  @override String get system => 'Προεπιλογή συστήματος';
+  @override String get font => 'Γραμματοσειρά';
+  @override String get language => 'Γλώσσα';
+  @override String get month => 'Μήνας';
+  @override String get day => 'Ημέρα';
+  @override String get selectDay => 'Επιλέξτε μια ημέρα για λεπτομέρειες νηστείας.';
+  @override String get noFasting => 'Κατάλυση';
+  @override String get noFastingDesc => 'Επιτρέπονται όλες οι τροφές σήμερα.';
+  @override String get fastingRules => 'Κανόνες Νηστείας';
+  @override String get fastingEncouragement => 
+      'Αυτήν την ημέρα, οι πιστοί ενθαρρύνονται να τηρούν τις παραδοσιακές οδηγίες νηστείας σύμφωνα με την παράδοσή τους.';
+
+  @override String get strictFastLabel => 'Αυστηρή Νηστεία';
+  @override String get strictFastDesc => 'Αποχή από κρέας, ψάρι, λάδι, κρασί, γαλακτοκομικά και αυγά.';
+  @override String get wineOilLabel => 'Οίνος και Έλαιο';
+  @override String get wineOilDesc => 'Επιτρέπεται το κρασί και το λάδι. Αποχή από κρέας, ψάρι, γαλακτοκομικά και αυγά.';
+  @override String get fishOilWineLabel => 'Ιχθύς, Οίνος και Έλαιο';
+  @override String get fishOilWineDesc => 'Επιτρέπεται το ψάρι, το κρασί και το λάδι. Αποχή από κρέας, γαλακτοκομικά και αυγά.';
+  @override String get dairyAllowedLabel => 'Κατάλυση Τυρού';
+  @override String get dairyAllowedDesc => 'Επιτρέπονται γαλακτοκομικά, αυγά, ψάρι, λάδι και κρασί. Αποχή από κρέας.';
+}
+
+/// Arabic Overrides
+class ArabicStrings extends AppStrings {
+  @override String get today => 'اليوم';
+  @override String get settings => 'الإعدادات';
+  @override String get strictFastLabel => 'صوم انقطاعي';
+}
+
+/// Church Slavonic Overrides
+class SlavonicStrings extends AppStrings {
+  @override String get today => 'Днесь';
+  @override String get settings => 'Настройки';
+  @override String get strictFastLabel => 'Строгій постъ';
+}
+
+/// Ethiopian (Amharic) Overrides
+class AmharicStrings extends AppStrings {
+  @override String get today => 'ዛሬ';
+  @override String get settings => 'ቅንጅቶች';
+  @override String get strictFastLabel => 'አጽዋማት';
+}
+
+class Translations {
+  /// Returns the correct string object for the given language
+  static AppStrings of(AppLanguage lang) {
+    switch (lang) {
+      case AppLanguage.greek:
+        return GreekStrings();
+      case AppLanguage.arabic:
+        return ArabicStrings();
+      case AppLanguage.churchSlavonic:
+        return SlavonicStrings();
+      case AppLanguage.ethiopian:
+        return AmharicStrings();
+      case AppLanguage.english:
+      default:
+        return AppStrings(); // Fallback to English
+    }
   }
 
+  // Helper methods for the FastType enum
   static String getFastLabel(FastType type, AppLanguage lang) {
+    final s = of(lang);
     switch (type) {
-      case FastType.strictFast: return get('strict_fast_label', lang);
-      case FastType.wineAndOil: return get('wine_oil_label', lang);
-      case FastType.fishOilWine: return get('fish_oil_wine_label', lang);
-      case FastType.dairyAllowed: return get('dairy_allowed_label', lang);
+      case FastType.strictFast: return s.strictFastLabel;
+      case FastType.wineAndOil: return s.wineOilLabel;
+      case FastType.fishOilWine: return s.fishOilWineLabel;
+      case FastType.dairyAllowed: return s.dairyAllowedLabel;
     }
   }
 
   static String getFastDescription(FastType type, AppLanguage lang) {
+    final s = of(lang);
     switch (type) {
-      case FastType.strictFast: return get('strict_fast_desc', lang);
-      case FastType.wineAndOil: return get('wine_oil_desc', lang);
-      case FastType.fishOilWine: return get('fish_oil_wine_desc', lang);
-      case FastType.dairyAllowed: return get('dairy_allowed_desc', lang);
+      case FastType.strictFast: return s.strictFastDesc;
+      case FastType.wineAndOil: return s.wineOilDesc;
+      case FastType.fishOilWine: return s.fishOilWineDesc;
+      case FastType.dairyAllowed: return s.dairyAllowedDesc;
     }
   }
 }
