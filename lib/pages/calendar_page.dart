@@ -53,7 +53,6 @@ class _CalendarPageState extends State<CalendarPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text('Fasting Calendar'),
         actions: [
           IconButton(
             icon: const Icon(Icons.today),
