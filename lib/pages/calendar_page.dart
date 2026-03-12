@@ -1,4 +1,5 @@
 import 'package:fastingcalender/services/fasting_service.dart';
+import 'package:fastingcalender/services/theme_service.dart';
 import 'package:fastingcalender/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -19,8 +20,36 @@ class _CalendarPageState extends State<CalendarPage> {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      body: Column(
+      body: SafeArea(
+        child: Column(
         children: [
+          // Settings bar
+          Align(
+            alignment: Alignment.centerRight,
+            child: PopupMenuButton<String>(
+              icon: const Icon(Icons.settings),
+              tooltip: 'Settings',
+              onSelected: (value) {
+                switch (value) {
+                  case 'theme_system':
+                    themeService.setThemeMode(ThemeMode.system);
+                  case 'theme_light':
+                    themeService.setThemeMode(ThemeMode.light);
+                  case 'theme_dark':
+                    themeService.setThemeMode(ThemeMode.dark);
+                }
+              },
+              itemBuilder: (context) => [
+                const PopupMenuItem(
+                  enabled: false,
+                  child: Text('Theme', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                ),
+                const PopupMenuItem(value: 'theme_system', child: Text('Device Default')),
+                const PopupMenuItem(value: 'theme_light', child: Text('Light Mode')),
+                const PopupMenuItem(value: 'theme_dark', child: Text('Dark Mode')),
+              ],
+            ),
+          ),
           TableCalendar(
             firstDay: DateTime.utc(2020, 1, 1),
             lastDay: DateTime.utc(2030, 12, 31),
@@ -59,6 +88,7 @@ class _CalendarPageState extends State<CalendarPage> {
             ),
           ),
         ],
+      ),
       ),
     );
   }
