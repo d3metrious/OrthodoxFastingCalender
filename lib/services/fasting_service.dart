@@ -1,3 +1,4 @@
+import 'package:fastingcalender/models/fast_type.dart';
 import 'package:flutter/material.dart';
 
 class FastingService extends ChangeNotifier {
@@ -5,10 +6,10 @@ class FastingService extends ChangeNotifier {
     // Nothing to load yet
   }
 
-  /// Returns a fasting label if the given day is a fasting day, otherwise null.
-  String? getFastingType(DateTime date) {
-    if (date.weekday == DateTime.wednesday) return 'Wednesday Fast';
-    if (date.weekday == DateTime.friday) return 'Friday Fast';
+  /// Returns the [FastType] for the given day, or null if it is not a fasting day.
+  FastType? getFastingType(DateTime date) {
+    if (date.weekday == DateTime.wednesday) return FastType.strictFast;
+    if (date.weekday == DateTime.friday) return FastType.strictFast;
     return null;
   }
 }
