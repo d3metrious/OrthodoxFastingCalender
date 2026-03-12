@@ -68,10 +68,14 @@ class _CalendarPageState extends State<CalendarPage> {
         final String safeLocale = _getSafeLocale();
 
         return Scaffold(
+          // Removing the AppBar background and shadow makes the top row feel less cluttered
           appBar: AppBar(
+            backgroundColor: Colors.transparent,
+            elevation: 0,
+            scrolledUnderElevation: 0,
             actions: [
               IconButton(
-                icon: const Icon(Icons.today),
+                icon: const Icon(Icons.today_outlined),
                 tooltip: s.today,
                 onPressed: () {
                   setState(() {
@@ -81,7 +85,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 },
               ),
               PopupMenuButton<String>(
-                icon: const Icon(Icons.settings),
+                icon: const Icon(Icons.settings_outlined),
                 onSelected: (value) {
                   if (value.startsWith('theme_')) {
                     final mode = ThemeMode.values.firstWhere((e) => e.name == value.substring(6));
@@ -136,13 +140,20 @@ class _CalendarPageState extends State<CalendarPage> {
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: _onTabTapped,
+            // Modern styling for the bottom bar
+            elevation: 0,
+            backgroundColor: isDarkMode ? AppColors.fastingBackgroundDark : AppColors.fastingBackgroundLight,
+            selectedItemColor: AppColors.primary,
+            unselectedItemColor: isDarkMode ? Colors.white54 : Colors.black54,
             items: [
               BottomNavigationBarItem(
-                icon: const Icon(Icons.calendar_month),
+                icon: const Icon(Icons.calendar_month_outlined),
+                activeIcon: const Icon(Icons.calendar_month),
                 label: s.month,
               ),
               BottomNavigationBarItem(
-                icon: const Icon(Icons.today),
+                icon: const Icon(Icons.today_outlined),
+                activeIcon: const Icon(Icons.today),
                 label: s.day,
               ),
             ],
@@ -160,9 +171,16 @@ class _CalendarPageState extends State<CalendarPage> {
           lastDay: DateTime.utc(2030, 12, 31),
           focusedDay: _focusedDay,
           locale: locale,
-          headerStyle: const HeaderStyle(
+          headerStyle: HeaderStyle(
             formatButtonVisible: false,
             titleCentered: true,
+            titleTextStyle: TextStyle(
+              fontSize: 20,
+              fontWeight: FontWeight.bold,
+              color: isDarkMode ? Colors.white : Colors.black,
+            ),
+            leftChevronIcon: Icon(Icons.chevron_left, color: isDarkMode ? Colors.white70 : Colors.black54),
+            rightChevronIcon: Icon(Icons.chevron_right, color: isDarkMode ? Colors.white70 : Colors.black54),
           ),
           availableGestures: AvailableGestures.horizontalSwipe,
           onPageChanged: (focusedDay) {
@@ -224,12 +242,12 @@ class _CalendarPageState extends State<CalendarPage> {
               Column(
                 children: [
                   Text(
-                    DateFormat('EEEE', locale).format(dateToDisplay),
-                    style: Theme.of(context).textTheme.titleLarge,
+                    DateFormat('EEEE', languageService.language.languageCode).format(dateToDisplay),
+                    style: Theme.of(context).textTheme.titleLarge?.copyWith(fontWeight: FontWeight.bold),
                   ),
                   Text(
-                    DateFormat('MMMM d, yyyy', locale).format(dateToDisplay),
-                    style: Theme.of(context).textTheme.bodyMedium,
+                    DateFormat('MMMM d, yyyy', languageService.language.languageCode).format(dateToDisplay),
+                    style: Theme.of(context).textTheme.bodyMedium?.copyWith(color: isDarkMode ? Colors.white70 : Colors.black54),
                   ),
                 ],
               ),
@@ -245,7 +263,7 @@ class _CalendarPageState extends State<CalendarPage> {
             ],
           ),
         ),
-        const Divider(),
+        const Divider(indent: 32, endIndent: 32),
         Expanded(
           child: Center(
             child: _buildInfoCard(isDarkMode, dateToDisplay, s, expanded: true),
@@ -309,7 +327,7 @@ class _CalendarPageState extends State<CalendarPage> {
           return Row(
             mainAxisSize: MainAxisSize.min,
             children: [
-              Icon(type.icon, size: 12, color: type.color), // Using custom icon
+              Icon(type.icon, size: 12, color: type.color), 
               const SizedBox(width: 4),
               Text(
                 Translations.getFastLabel(type, languageService.language), 
@@ -335,7 +353,7 @@ class _CalendarPageState extends State<CalendarPage> {
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              fastType.icon, // Using custom icon
+              fastType.icon, 
               color: fastType.color, 
               size: expanded ? 80 : 40
             ),
@@ -343,7 +361,7 @@ class _CalendarPageState extends State<CalendarPage> {
             Text(
               Translations.getFastLabel(fastType, languageService.language),
               style: expanded 
-                ? Theme.of(context).textTheme.headlineMedium?.copyWith(color: fastType.color)
+                ? Theme.of(context).textTheme.headlineMedium?.copyWith(color: fastType.color, fontWeight: FontWeight.bold)
                 : Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
@@ -351,19 +369,21 @@ class _CalendarPageState extends State<CalendarPage> {
             Text(
               Translations.getFastDescription(fastType, languageService.language), 
               textAlign: TextAlign.center,
-              style: expanded ? Theme.of(context).textTheme.titleMedium : null,
+              style: expanded ? Theme.of(context).textTheme.titleMedium?.copyWith(color: isDarkMode ? Colors.white70 : Colors.black87) : null,
             ),
             if (expanded) ...[
               const SizedBox(height: 40),
               Text(
                 s.fastingRules,
-                style: const TextStyle(fontWeight: FontWeight.bold),
+                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
               ),
+              const SizedBox(height: 8),
               Padding(
-                padding: const EdgeInsets.all(8.0),
+                padding: const EdgeInsets.symmetric(horizontal: 32.0),
                 child: Text(
                   s.fastingEncouragement,
                   textAlign: TextAlign.center,
+                  style: const TextStyle(fontStyle: FontStyle.italic),
                 ),
               ),
             ]
@@ -376,17 +396,17 @@ class _CalendarPageState extends State<CalendarPage> {
       mainAxisSize: MainAxisSize.min,
       children: [
         Icon(
-          Icons.celebration, 
+          Icons.celebration_outlined, 
           color: Colors.green, 
           size: expanded ? 80 : 40
         ),
         const SizedBox(height: 16),
         Text(
           s.noFasting,
-          style: const TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          style: TextStyle(fontSize: expanded ? 28 : 24, fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
-        Text(s.noFastingDesc),
+        Text(s.noFastingDesc, style: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54)),
       ],
     );
   }
