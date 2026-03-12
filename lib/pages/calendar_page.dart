@@ -52,7 +52,7 @@ class _CalendarPageState extends State<CalendarPage> {
 
     return Scaffold(
       appBar: AppBar(
-        title: const Text(''),
+        title: const Text('Fasting Calendar'),
         actions: [
           IconButton(
             icon: const Icon(Icons.today),
@@ -120,6 +120,10 @@ class _CalendarPageState extends State<CalendarPage> {
           firstDay: DateTime.utc(2020, 1, 1),
           lastDay: DateTime.utc(2030, 12, 31),
           focusedDay: _focusedDay,
+          headerStyle: const HeaderStyle(
+            formatButtonVisible: false,
+            titleCentered: true,
+          ),
           selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
           onDaySelected: (selectedDay, focusedDay) {
             setState(() {

@@ -3,6 +3,7 @@ import 'package:fastingcalender/services/fasting_service.dart';
 import 'package:fastingcalender/services/theme_service.dart';
 import 'package:fastingcalender/utils/app_colors.dart';
 import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -19,8 +20,6 @@ class FastingCalendarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ListenableBuilder can listen to multiple change notifiers using a Column of builders,
-    // but a cleaner way for multiple is using `MultiListenableBuilder` or just nested builders.
     return ListenableBuilder(
       listenable: themeService,
       builder: (context, child) {
@@ -35,6 +34,7 @@ class FastingCalendarApp extends StatelessWidget {
                   brightness: Brightness.light,
                 ),
                 useMaterial3: true,
+                textTheme: GoogleFonts.loraTextTheme(),
               ),
               darkTheme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(
@@ -42,6 +42,9 @@ class FastingCalendarApp extends StatelessWidget {
                   brightness: Brightness.dark,
                 ),
                 useMaterial3: true,
+                textTheme: GoogleFonts.loraTextTheme(
+                  ThemeData(brightness: Brightness.dark).textTheme,
+                ),
               ),
               themeMode: themeService.themeMode,
               home: const CalendarPage(),
