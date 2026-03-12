@@ -1,9 +1,8 @@
+import 'package:fastingcalender/services/fasting_service.dart';
+import 'package:fastingcalender/services/theme_service.dart';
+import 'package:fastingcalender/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
-import '../models/fasting_tradition.dart';
-import '../services/fasting_service.dart';
-import '../services/theme_service.dart';
-import '../utils/app_colors.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -36,18 +35,6 @@ class _CalendarPageState extends State<CalendarPage> {
               const PopupMenuItem(value: ThemeMode.dark, child: Text('Dark Mode')),
             ],
           ),
-          // Tradition Selector
-          PopupMenuButton<FastingTradition>(
-            icon: const Icon(Icons.settings),
-            tooltip: 'Change Tradition',
-            onSelected: (tradition) => fastingService.setTradition(tradition),
-            itemBuilder: (context) => FastingTradition.values.map((tradition) {
-              return PopupMenuItem(
-                value: tradition,
-                child: Text(tradition.displayName),
-              );
-            }).toList(),
-          ),
         ],
       ),
       body: Column(
@@ -68,22 +55,22 @@ class _CalendarPageState extends State<CalendarPage> {
               return fast != null ? [fast] : [];
             },
             calendarStyle: CalendarStyle(
-              markerDecoration: const BoxDecoration(
-                color: AppColors.fastingMarker,
-                shape: BoxShape.circle,
-              ),
+              markersMaxCount: 0,
               defaultTextStyle: TextStyle(color: isDarkMode ? Colors.white : Colors.black),
               weekendTextStyle: TextStyle(color: isDarkMode ? Colors.white70 : Colors.black54),
             ),
-          ),
-          const SizedBox(height: 20),
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 16.0),
-            child: Text(
-              'Selected Tradition: ${fastingService.tradition.displayName}',
-              style: Theme.of(context).textTheme.bodySmall,
+            calendarBuilders: CalendarBuilders(
+              defaultBuilder: (context, day, focusedDay) => _buildDayCell(
+                day, isDarkMode,
+                isWeekend: day.weekday == DateTime.saturday || day.weekday == DateTime.sunday,
+              ),
+              todayBuilder: (context, day, focusedDay) =>
+                  _buildDayCell(day, isDarkMode, isToday: true),
+              selectedBuilder: (context, day, focusedDay) =>
+                  _buildDayCell(day, isDarkMode, isSelected: true),
             ),
           ),
+          const SizedBox(height: 20),
           Expanded(
             child: Center(
               child: _buildInfoCard(isDarkMode),
@@ -91,6 +78,44 @@ class _CalendarPageState extends State<CalendarPage> {
           ),
         ],
       ),
+    );
+  }
+
+  Widget _buildDayCell(
+    DateTime day,
+    bool isDarkMode, {
+    bool isWeekend = false,
+    bool isToday = false,
+    bool isSelected = false,
+  }) {
+    final isFasting = fastingService.getFastingType(day) != null;
+
+    Color? bgColor;
+    Color textColor;
+
+    if (isSelected) {
+      bgColor = AppColors.primary;
+      textColor = Colors.white;
+    } else if (isFasting) {
+      bgColor = AppColors.fastingMarker.withOpacity(0.35);
+      textColor = isDarkMode ? Colors.white : Colors.black;
+    } else if (isToday) {
+      bgColor = AppColors.primary.withOpacity(0.25);
+      textColor = isDarkMode ? Colors.white : Colors.black;
+    } else {
+      bgColor = null;
+      textColor = isWeekend
+          ? (isDarkMode ? Colors.white70 : Colors.black54)
+          : (isDarkMode ? Colors.white : Colors.black);
+    }
+
+    return Container(
+      margin: const EdgeInsets.all(4),
+      decoration: bgColor != null
+          ? BoxDecoration(color: bgColor, borderRadius: BorderRadius.circular(6))
+          : null,
+      alignment: Alignment.center,
+      child: Text('${day.day}', style: TextStyle(color: textColor)),
     );
   }
 

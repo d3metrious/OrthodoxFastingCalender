@@ -1,0 +1,7 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(del \"D:\\\\AndroidStudioProjects\\\\FastingCalender\\\\lib\\\\models\\\\fasting_tradition.dart\")"
+    ]
+  }
+}

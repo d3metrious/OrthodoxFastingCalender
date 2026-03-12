@@ -1,16 +1,16 @@
+import 'package:fastingcalender/pages/calendar_page.dart';
+import 'package:fastingcalender/services/fasting_service.dart';
+import 'package:fastingcalender/services/theme_service.dart';
+import 'package:fastingcalender/utils/app_colors.dart';
 import 'package:flutter/material.dart';
-import 'pages/calendar_page.dart';
-import 'utils/app_colors.dart';
-import 'services/theme_service.dart';
-import 'services/fasting_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  
+
   // Initialize both services
   await themeService.init();
   await fastingService.init();
-  
+
   runApp(const FastingCalendarApp());
 }
 
@@ -19,7 +19,7 @@ class FastingCalendarApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // ListenableBuilder can listen to multiple change notifiers using a Column of builders, 
+    // ListenableBuilder can listen to multiple change notifiers using a Column of builders,
     // but a cleaner way for multiple is using `MultiListenableBuilder` or just nested builders.
     return ListenableBuilder(
       listenable: themeService,
