@@ -1,5 +1,4 @@
 import 'package:fastingcalender/services/fasting_service.dart';
-import 'package:fastingcalender/services/theme_service.dart';
 import 'package:fastingcalender/utils/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
@@ -20,23 +19,6 @@ class _CalendarPageState extends State<CalendarPage> {
     final bool isDarkMode = Theme.of(context).brightness == Brightness.dark;
 
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Church Fasting Calendar'),
-        backgroundColor: AppColors.primary.withOpacity(0.1),
-        actions: [
-          // Theme Selector
-          PopupMenuButton<ThemeMode>(
-            icon: const Icon(Icons.palette),
-            tooltip: 'Change Theme',
-            onSelected: (mode) => themeService.setThemeMode(mode),
-            itemBuilder: (context) => [
-              const PopupMenuItem(value: ThemeMode.system, child: Text('Device Default')),
-              const PopupMenuItem(value: ThemeMode.light, child: Text('Light Mode')),
-              const PopupMenuItem(value: ThemeMode.dark, child: Text('Dark Mode')),
-            ],
-          ),
-        ],
-      ),
       body: Column(
         children: [
           TableCalendar(
