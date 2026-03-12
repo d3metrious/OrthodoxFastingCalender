@@ -60,8 +60,6 @@ class _CalendarPageState extends State<CalendarPage> {
 
   @override
   Widget build(BuildContext context) {
-    // We use a ListenableBuilder here to ensure this page rebuilds
-    // whenever the language or other services change.
     return ListenableBuilder(
       listenable: Listenable.merge([languageService, themeService, fastingService]),
       builder: (context, child) {
@@ -121,7 +119,7 @@ class _CalendarPageState extends State<CalendarPage> {
                   ...AppLanguage.values.map((lang) => PopupMenuItem(
                         value: 'lang_${lang.name}',
                         child: Text(lang.displayName),
-                      )),
+                  )),
                 ],
               ),
             ],
@@ -129,6 +127,7 @@ class _CalendarPageState extends State<CalendarPage> {
           body: PageView(
             controller: _pageController,
             onPageChanged: _onPageChanged,
+            physics: const ClampingScrollPhysics(), // Better interaction with calendar swipes
             children: [
               _buildMonthView(isDarkMode, s, safeLocale),
               _buildDayView(isDarkMode, s, safeLocale),
@@ -165,6 +164,12 @@ class _CalendarPageState extends State<CalendarPage> {
             formatButtonVisible: false,
             titleCentered: true,
           ),
+          availableGestures: AvailableGestures.horizontalSwipe, // Explicitly allow horizontal swipes for month changes
+          onPageChanged: (focusedDay) {
+            setState(() {
+              _focusedDay = focusedDay;
+            });
+          },
           selectedDayPredicate: (day) => isSameDay(_selectedDay, day),
           onDaySelected: (selectedDay, focusedDay) {
             setState(() {
