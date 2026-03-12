@@ -47,6 +47,7 @@ class FastingCalendarApp extends StatelessWidget {
               seedColor: AppColors.primary,
               brightness: Brightness.light,
             ),
+            scaffoldBackgroundColor: AppColors.fastingBackgroundLight,
             useMaterial3: true,
             textTheme: textTheme,
           ),
@@ -54,13 +55,15 @@ class FastingCalendarApp extends StatelessWidget {
             colorScheme: ColorScheme.fromSeed(
               seedColor: AppColors.primary,
               brightness: Brightness.dark,
+            ).copyWith(
+              surface: AppColors.fastingBackgroundDark,
             ),
+            scaffoldBackgroundColor: AppColors.fastingBackgroundDark,
             useMaterial3: true,
             textTheme: darkTextTheme,
           ),
           themeMode: themeService.themeMode,
-          // Removed 'const' to ensure it rebuilds when MaterialApp rebuilds
-          home: CalendarPage(),
+          home: const CalendarPage(),
         );
       },
     );

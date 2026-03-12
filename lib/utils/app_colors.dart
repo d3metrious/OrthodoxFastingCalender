@@ -13,7 +13,7 @@ class AppColors {
 
   // ── Calendar ─────────────────────────────────────────────────────────────
   static const Color fastingBackgroundLight = Color(0xFFEDEDED);
-  static const Color fastingBackgroundDark  = Color(0xFF121212);
+  static const Color fastingBackgroundDark  = Color(0xFF2c2c2c);
 
   // ── Neutral ──────────────────────────────────────────────────────────────
   static const Color noFastingText = Colors.grey;
