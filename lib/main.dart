@@ -34,7 +34,7 @@ class FastingCalendarApp extends StatelessWidget {
                   brightness: Brightness.light,
                 ),
                 useMaterial3: true,
-                textTheme: GoogleFonts.loraTextTheme(),
+                textTheme: GoogleFonts.notoSerifTextTheme(),
               ),
               darkTheme: ThemeData(
                 colorScheme: ColorScheme.fromSeed(
@@ -42,7 +42,7 @@ class FastingCalendarApp extends StatelessWidget {
                   brightness: Brightness.dark,
                 ),
                 useMaterial3: true,
-                textTheme: GoogleFonts.loraTextTheme(
+                textTheme: GoogleFonts.notoSerifTextTheme(
                   ThemeData(brightness: Brightness.dark).textTheme,
                 ),
               ),
