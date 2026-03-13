@@ -200,7 +200,7 @@ class FastingService extends ChangeNotifier {
     return switch (date.weekday) {
       DateTime.wednesday || DateTime.friday => FastType.strictFast,
       DateTime.saturday  || DateTime.sunday => FastType.fishOilWine,
-      _                                     => FastType.wineAndOil,
+      _                                     => FastType.fishOilWine,
     };
   }
 
