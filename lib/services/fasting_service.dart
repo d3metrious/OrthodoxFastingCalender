@@ -19,6 +19,7 @@ class FastingService extends ChangeNotifier {
     // ── 3. Compute the base fast from season / weekly rules ───────────────
     final FastType? base =
         _lentFast(d, easter) ??
+        _pentecostarionFast(d, easter) ??   // relaxed Wed/Fri after Bright Week → All Saints
         _apostlesFast(d, easter) ??
         _dormitionFast(d) ??
         _nativityFast(d) ??
@@ -162,6 +163,29 @@ class FastingService extends ChangeNotifier {
     return (date.weekday == DateTime.saturday || date.weekday == DateTime.sunday)
         ? FastType.wineAndOil
         : FastType.strictFast;
+  }
+
+  // ═══════════════════════════════════════════════════════════════════════════
+  // Pentecostarion  (Mon after Bright Week → All Saints Sunday)
+  // Wed & Fri fasting is relaxed to wine & oil throughout this period.
+  // Fast-free sub-periods (Bright Week, Pentecost week) are already removed
+  // by _isFastFree before this method is ever reached.
+  // ═══════════════════════════════════════════════════════════════════════════
+
+  FastType? _pentecostarionFast(DateTime date, DateTime easter) {
+    final start = _shift(easter, 7);   // Monday after Bright Week
+    final end   = _shift(easter, 56);  // All Saints Sunday
+    if (!_inRange(date, start, end)) return null;
+
+    // Mid-Pentecost (4th Wed after Pascha = Easter + 24): fish allowed
+    if (_same(date, _shift(easter, 24))) return FastType.fishOilWine;
+    // Apodosis of Pascha (Wed before Ascension = Easter + 38): fish allowed
+    if (_same(date, _shift(easter, 38))) return FastType.fishOilWine;
+
+    if (date.weekday == DateTime.wednesday || date.weekday == DateTime.friday) {
+      return FastType.wineAndOil;
+    }
+    return null;
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
