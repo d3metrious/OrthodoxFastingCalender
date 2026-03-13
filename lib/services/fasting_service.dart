@@ -149,7 +149,7 @@ class FastingService extends ChangeNotifier {
     if (!_inRange(date, cleanMonday, holySaturday)) return null;
 
     // Holy-Week special days (in date order)
-    if (_same(date, _shift(easter, -8))) return FastType.fishOilWine; // Lazarus Saturday
+    if (_same(date, _shift(easter, -8))) return FastType.wineAndOil;  // Lazarus Saturday
     if (_same(date, _shift(easter, -7))) return FastType.fishOilWine; // Palm Sunday
     if (_same(date, _shift(easter, -6))) return FastType.strictFast;  // Holy Monday
     if (_same(date, _shift(easter, -5))) return FastType.strictFast;  // Holy Tuesday
