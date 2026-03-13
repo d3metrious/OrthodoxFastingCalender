@@ -15,6 +15,7 @@ class AppStrings {
   String get month => 'Month';
   String get day => 'Day';
   String get year => 'Year';
+  String get defaultView => 'Default View';
   String get selectDay => 'Select a day to see fasting details.';
   String get noFasting => 'No Fasting';
   String get noFastingDesc => 'Standard foods are permitted today.';
@@ -72,6 +73,7 @@ class GreekStrings extends AppStrings {
   @override String get month => 'Μήνας';
   @override String get day => 'Ημέρα';
   @override String get year => 'Έτος';
+  @override String get defaultView => 'Προεπιλεγμένη προβολή';
   @override String get selectDay => 'Επιλέξτε μια ημέρα για λεπτομέρειες νηστείας.';
   @override String get noFasting => 'Κατάλυση';
   @override String get noFastingDesc => 'Επιτρέπονται όλες οι τροφές σήμερα.';
@@ -126,6 +128,7 @@ class ArabicStrings extends AppStrings {
   @override String get month => 'الشهر';
   @override String get day => 'اليوم';
   @override String get year => 'العام';
+  @override String get defaultView => 'العرض الافتراضي';
   @override String get selectDay => 'اختر يوماً لرؤية تفاصيل الصيام.';
   @override String get noFasting => 'لا يوجد صيام';
   @override String get noFastingDesc => 'جميع الأطعمة مسموحة اليوم.';
@@ -178,6 +181,7 @@ class SlavonicStrings extends AppStrings {
   @override String get month => 'Мѣсяцъ';
   @override String get day => 'День';
   @override String get year => 'Годъ';
+  @override String get defaultView => 'Видъ по умолчанию';
   @override String get selectDay => 'Выбери день да видиши правила поста.';
   @override String get noFasting => 'Поста нѣсть';
   @override String get noFastingDesc => 'Всяка пища разрѣшена днесь.';
@@ -211,10 +215,10 @@ class SlavonicStrings extends AppStrings {
   @override String get wineOilLabel => 'Виνο и елей';
   @override String get fishOilWineLabel => 'Рыба, вино и елей';
   @override String get dairyAllowedLabel => 'Разрѣшеніе на вся';
-  @override String get strictFastDesc => 'Воздержаніе отъ мяса, рыбы, елея, вина, млечныхъ и яицъ.';
-  @override String get wineOilDesc => 'Виνο и елей разрѣшаются. Воздержаніе отъ мяса, рыбы, млечныхъ и яицъ.';
-  @override String get fishOilWineDesc => 'Рыба, елей и вино разрѣшаются. Воздержаніе отъ мяса, млечныхъ и яицъ.';
-  @override String get dairyAllowedDesc => 'Млечная, яйца, рыба, елей и вино разрѣшаются. Воздержаніе отъ мяса.';
+  @override String get strictFastDesc => 'Воздержаніе отъ мяса, рыбы, елея, вина, млечныхъ and яицъ.';
+  @override String get wineOilDesc => 'Виνο и елей разρѣшаются. Воздержаніе отъ мяса, рыбы, млечныхъ and яицъ.';
+  @override String get fishOilWineDesc => 'Рыба, елей and вино разρѣшаются. Воздержаніе отъ мяса, млечныхъ and яицъ.';
+  @override String get dairyAllowedDesc => 'Млечная, яйца, рыба, елей and вино разρѣшаются. Воздержаніе отъ мяса.';
 }
 
 /// Ethiopian (Amharic) Overrides
@@ -230,6 +234,7 @@ class AmharicStrings extends AppStrings {
   @override String get month => 'ወር';
   @override String get day => 'ቀን';
   @override String get year => 'ዓመት';
+  @override String get defaultView => 'ተመራጭ እይታ';
   @override String get selectDay => 'የጾም ዝርዝሮችን ለማየት ቀኑን ይምረጡ።';
   @override String get noFasting => 'ጾም የለም';
   @override String get noFastingDesc => 'ዛሬ ሁሉም ምግቦች ይፈቀዳሉ።';

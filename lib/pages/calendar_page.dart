@@ -21,12 +21,14 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  int _currentIndex = 1; // Default to Month view
+  late int _currentIndex;
   late PageController _pageController;
 
   @override
   void initState() {
     super.initState();
+    // Initialize with the saved default tab
+    _currentIndex = themeService.defaultTabIndex;
     _pageController = PageController(initialPage: _currentIndex);
     _selectedDay = _focusedDay;
   }
@@ -96,6 +98,9 @@ class _CalendarPageState extends State<CalendarPage> {
                   } else if (value.startsWith('lang_')) {
                     final lang = AppLanguage.values.firstWhere((e) => e.name == value.substring(5));
                     languageService.setLanguage(lang);
+                  } else if (value.startsWith('tab_')) {
+                    final index = int.parse(value.substring(4));
+                    themeService.setDefaultTab(index);
                   }
                 },
                 itemBuilder: (context) => [
@@ -124,6 +129,14 @@ class _CalendarPageState extends State<CalendarPage> {
                         value: 'lang_${lang.name}',
                         child: Text(lang.displayName),
                   )),
+                  const PopupMenuDivider(),
+                  PopupMenuItem(
+                    enabled: false,
+                    child: Text(s.defaultView, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
+                  ),
+                  PopupMenuItem(value: 'tab_0', child: Text(s.day)),
+                  PopupMenuItem(value: 'tab_1', child: Text(s.month)),
+                  PopupMenuItem(value: 'tab_2', child: Text(s.year)),
                 ],
               ),
             ],

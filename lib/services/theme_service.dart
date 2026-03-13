@@ -5,12 +5,15 @@ import '../models/app_font.dart';
 class ThemeService extends ChangeNotifier {
   static const String _themeKey = 'theme_mode';
   static const String _fontKey = 'app_font';
+  static const String _tabKey = 'default_tab_index';
 
   ThemeMode _themeMode = ThemeMode.system;
   AppFont _appFont = AppFont.serif;
+  int _defaultTabIndex = 1; // Default to Month view (index 1)
 
   ThemeMode get themeMode => _themeMode;
   AppFont get appFont => _appFont;
+  int get defaultTabIndex => _defaultTabIndex;
 
   /// Call this at app startup to load saved preferences
   Future<void> init() async {
@@ -32,6 +35,9 @@ class ThemeService extends ChangeNotifier {
       (e) => e.name == savedFont,
       orElse: () => AppFont.serif,
     );
+
+    // Load default tab
+    _defaultTabIndex = prefs.getInt(_tabKey) ?? 1;
     
     notifyListeners();
   }
@@ -54,6 +60,17 @@ class ThemeService extends ChangeNotifier {
     
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(_fontKey, font.name);
+    
+    notifyListeners();
+  }
+
+  /// Update and persist the default tab
+  Future<void> setDefaultTab(int index) async {
+    if (_defaultTabIndex == index) return;
+    _defaultTabIndex = index;
+    
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setInt(_tabKey, index);
     
     notifyListeners();
   }
