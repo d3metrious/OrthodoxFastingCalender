@@ -1,17 +1,15 @@
-# fastingcalender
+# Orthodox Fasting Calender
 
 Fasting Calendar is a simple and convenient way to view the fasting days of the Orthodox Christian liturgical year.
 
-## Getting Started
+The calendar highlights weekly fasting days as well as major fasting seasons such as Great Lent, the Dormition Fast, the Apostles’ Fast, and the Nativity Fast. Quickly check any date to see whether it is observed as a fasting day.
 
-This project is a starting point for a Flutter application.
+Features include:
 
-A few resources to get you started if this is your first Flutter project:
+- Clear calendar view of fasting days
+- Automatic calculation of yearly fasting periods
+- Lightweight and easy to use
+- No accounts, tracking, or distractions
 
-- [Learn Flutter](https://docs.flutter.dev/get-started/learn-flutter)
-- [Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Flutter learning resources](https://docs.flutter.dev/reference/learning-resources)
+This app is intended as a simple reference for those who wish to follow the traditional fasting practices of the Orthodox Church.
 
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
