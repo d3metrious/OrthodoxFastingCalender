@@ -21,7 +21,7 @@ class CalendarPage extends StatefulWidget {
 class _CalendarPageState extends State<CalendarPage> {
   DateTime _focusedDay = DateTime.now();
   DateTime? _selectedDay;
-  int _currentIndex = 0;
+  int _currentIndex = 1; // Default to Month view
   late PageController _pageController;
 
   @override
@@ -133,8 +133,8 @@ class _CalendarPageState extends State<CalendarPage> {
             onPageChanged: _onPageChanged,
             physics: const ClampingScrollPhysics(),
             children: [
-              _buildMonthView(isDarkMode, s, safeLocale),
               _buildDayView(isDarkMode, s, safeLocale),
+              _buildMonthView(isDarkMode, s, safeLocale),
               YearView(initialYear: _focusedDay.year, isDarkMode: isDarkMode),
             ],
           ),
@@ -147,14 +147,14 @@ class _CalendarPageState extends State<CalendarPage> {
             unselectedItemColor: isDarkMode ? Colors.white54 : Colors.black54,
             items: [
               BottomNavigationBarItem(
-                icon: const Icon(Icons.calendar_month_outlined),
-                activeIcon: const Icon(Icons.calendar_month),
-                label: s.month,
-              ),
-              BottomNavigationBarItem(
                 icon: const Icon(Icons.today_outlined),
                 activeIcon: const Icon(Icons.today),
                 label: s.day,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.calendar_month_outlined),
+                activeIcon: const Icon(Icons.calendar_month),
+                label: s.month,
               ),
               BottomNavigationBarItem(
                 icon: const Icon(Icons.grid_view_outlined),
