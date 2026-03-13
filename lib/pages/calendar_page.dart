@@ -10,6 +10,7 @@ import 'package:fastingcalender/widgets/year_view.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class CalendarPage extends StatefulWidget {
   const CalendarPage({super.key});
@@ -77,11 +78,16 @@ class _CalendarPageState extends State<CalendarPage> {
             final sheetStrings = Translations.of(languageService.language);
 
             return SafeArea(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(vertical: 20),
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
+              child: ConstrainedBox(
+                constraints: BoxConstraints(
+                  maxHeight: MediaQuery.of(context).size.height * 0.85,
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(vertical: 20),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
                     Text(sheetStrings.settings, style: Theme.of(context).textTheme.titleLarge),
                     const SizedBox(height: 10),
                     const Divider(),
@@ -126,7 +132,54 @@ class _CalendarPageState extends State<CalendarPage> {
                         sheetDarkMode
                       ),
                     ),
-                  ],
+
+                    const Divider(),
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
+                      child: Text(
+                        sheetStrings.about,
+                        style: Theme.of(context).textTheme.labelSmall?.copyWith(
+                          color: sheetDarkMode ? Colors.white38 : Colors.black38,
+                          letterSpacing: 1.1,
+                        ),
+                      ),
+                    ),
+
+                    // Version
+                    ListTile(
+                      leading: const Icon(Icons.info_outline),
+                      title: const Text('Fasting Calendar'),
+                      trailing: Text(
+                        'v1.0.0',
+                        style: TextStyle(
+                          color: sheetDarkMode ? Colors.white54 : Colors.black45,
+                          fontSize: 13,
+                        ),
+                      ),
+                    ),
+
+                    // Source code
+                    ListTile(
+                      leading: const Icon(Icons.code_outlined),
+                      title: const Text('Source Code'),
+                      trailing: const Icon(Icons.open_in_new, size: 18),
+                      onTap: () => _launchUrl(
+                        'https://github.com/d3metrious/OrthodoxFastingCalender',
+                      ),
+                    ),
+
+                    // Contact
+                    ListTile(
+                      leading: const Icon(Icons.mail_outline),
+                      title: const Text('Contact'),
+                      trailing: const Icon(Icons.open_in_new, size: 18),
+                      onTap: () => _launchUrl(
+                        'https://www.jimidemetriou.com',
+                      ),
+                    ),
+                      ],
+                    ),
+                  ),
                 ),
               ),
             );
@@ -140,6 +193,17 @@ class _CalendarPageState extends State<CalendarPage> {
     if (themeService.defaultTabIndex == 0) return s.day;
     if (themeService.defaultTabIndex == 1) return s.month;
     return s.year;
+  }
+
+  Future<void> _launchUrl(String url) async {
+    final uri = Uri.parse(url);
+    if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text('Could not open $url')),
+        );
+      }
+    }
   }
 
   Widget _buildSettingTile({

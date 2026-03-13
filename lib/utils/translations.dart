@@ -6,6 +6,7 @@ import '../services/fasting_service.dart';
 class AppStrings {
   String get today => 'Today';
   String get settings => 'Settings';
+  String get about => 'About';
   String get theme => 'Theme';
   String get light => 'Light Mode';
   String get dark => 'Dark Mode';
@@ -64,6 +65,7 @@ class AppStrings {
 class GreekStrings extends AppStrings {
   @override String get today => 'Σήμερα';
   @override String get settings => 'Ρυθμίσεις';
+  @override String get about => 'Σχετικά';
   @override String get theme => 'Θέμα';
   @override String get light => 'Φωτεινό';
   @override String get dark => 'Σκούρο';
@@ -119,6 +121,7 @@ class GreekStrings extends AppStrings {
 class ArabicStrings extends AppStrings {
   @override String get today => 'اليوم';
   @override String get settings => 'الإعدادات';
+  @override String get about => 'حول';
   @override String get theme => 'المظهر';
   @override String get light => 'وضع فاتح';
   @override String get dark => 'وضع داكن';
@@ -172,6 +175,7 @@ class ArabicStrings extends AppStrings {
 class SlavonicStrings extends AppStrings {
   @override String get today => 'Днесь';
   @override String get settings => 'Настройки';
+  @override String get about => 'О приложеніи';
   @override String get theme => 'Оформленіе';
   @override String get light => 'Свѣтлая';
   @override String get dark => 'Темная';
@@ -225,6 +229,7 @@ class SlavonicStrings extends AppStrings {
 class AmharicStrings extends AppStrings {
   @override String get today => 'ዛሬ';
   @override String get settings => 'ቅንጅቶች';
+  @override String get about => 'ስለ';
   @override String get theme => 'ገጽታ';
   @override String get light => 'ብሩህ ገጽታ';
   @override String get dark => 'ጨለማ ገጽታ';
