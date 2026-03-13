@@ -27,7 +27,6 @@ class _CalendarPageState extends State<CalendarPage> {
   @override
   void initState() {
     super.initState();
-    // Initialize with the saved default tab
     _currentIndex = themeService.defaultTabIndex;
     _pageController = PageController(initialPage: _currentIndex);
     _selectedDay = _focusedDay;
@@ -61,6 +60,139 @@ class _CalendarPageState extends State<CalendarPage> {
     return 'en';
   }
 
+  void _showSettings(BuildContext context, AppStrings s, bool isDarkMode) {
+    showModalBottomSheet(
+      context: context,
+      backgroundColor: isDarkMode ? AppColors.fastingBackgroundDark : AppColors.fastingBackgroundLight,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
+      ),
+      builder: (context) {
+        return ListenableBuilder(
+          listenable: Listenable.merge([themeService, languageService]),
+          builder: (context, _) {
+            return SafeArea(
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 20),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(s.settings, style: Theme.of(context).textTheme.titleLarge),
+                    const SizedBox(height: 10),
+                    const Divider(),
+                    
+                    // Theme Setting
+                    _buildSettingTile(
+                      icon: Icons.palette_outlined,
+                      title: s.theme,
+                      currentValue: themeService.themeMode.name.toUpperCase(),
+                      onTap: () => _showOptions<ThemeMode>(
+                        context, s.theme, ThemeMode.values, (m) => themeService.setThemeMode(m),
+                        (m) => m.name.toUpperCase()
+                      ),
+                    ),
+
+                    // Font Setting
+                    _buildSettingTile(
+                      icon: Icons.font_download_outlined,
+                      title: s.font,
+                      currentValue: themeService.appFont.displayName,
+                      onTap: () => _showOptions<AppFont>(
+                        context, s.font, AppFont.values, (f) => themeService.setFont(f),
+                        (f) => f.displayName
+                      ),
+                    ),
+
+                    // Language Setting
+                    _buildSettingTile(
+                      icon: Icons.language_outlined,
+                      title: s.language,
+                      currentValue: languageService.language.displayName,
+                      onTap: () => _showOptions<AppLanguage>(
+                        context, s.language, AppLanguage.values, (l) => languageService.setLanguage(l),
+                        (l) => l.displayName
+                      ),
+                    ),
+
+                    // Default View Setting
+                    _buildSettingTile(
+                      icon: Icons.visibility_outlined,
+                      title: s.defaultView,
+                      currentValue: _currentIndexName(s),
+                      onTap: () => _showOptions<int>(
+                        context, s.defaultView, [0, 1, 2], (i) => themeService.setDefaultTab(i),
+                        (i) => i == 0 ? s.day : (i == 1 ? s.month : s.year)
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            );
+          }
+        );
+      },
+    );
+  }
+
+  String _currentIndexName(AppStrings s) {
+    if (themeService.defaultTabIndex == 0) return s.day;
+    if (themeService.defaultTabIndex == 1) return s.month;
+    return s.year;
+  }
+
+  Widget _buildSettingTile({
+    required IconData icon,
+    required String title,
+    required String currentValue,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Icon(icon),
+      title: Text(title),
+      trailing: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(currentValue, style: const TextStyle(color: AppColors.primary, fontWeight: FontWeight.bold)),
+          const Icon(Icons.chevron_right, size: 20),
+        ],
+      ),
+      onTap: onTap,
+    );
+  }
+
+  void _showOptions<T>(
+    BuildContext context, 
+    String title, 
+    List<T> options, 
+    Function(T) onSelect,
+    String Function(T) labelMapper
+  ) {
+    showModalBottomSheet(
+      context: context,
+      builder: (context) {
+        return SafeArea(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Padding(
+                padding: const EdgeInsets.all(16.0),
+                child: Text(title, style: Theme.of(context).textTheme.titleMedium),
+              ),
+              const Divider(),
+              ...options.map((opt) => ListTile(
+                title: Text(labelMapper(opt)),
+                onTap: () {
+                  onSelect(opt);
+                  Navigator.pop(context); // Close sub-menu
+                },
+              )).toList(),
+            ],
+          ),
+        );
+      },
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return ListenableBuilder(
@@ -86,58 +218,9 @@ class _CalendarPageState extends State<CalendarPage> {
                   });
                 },
               ),
-              PopupMenuButton<String>(
+              IconButton(
                 icon: const Icon(Icons.settings_outlined),
-                onSelected: (value) {
-                  if (value.startsWith('theme_')) {
-                    final mode = ThemeMode.values.firstWhere((e) => e.name == value.substring(6));
-                    themeService.setThemeMode(mode);
-                  } else if (value.startsWith('font_')) {
-                    final font = AppFont.values.firstWhere((e) => e.name == value.substring(5));
-                    themeService.setFont(font);
-                  } else if (value.startsWith('lang_')) {
-                    final lang = AppLanguage.values.firstWhere((e) => e.name == value.substring(5));
-                    languageService.setLanguage(lang);
-                  } else if (value.startsWith('tab_')) {
-                    final index = int.parse(value.substring(4));
-                    themeService.setDefaultTab(index);
-                  }
-                },
-                itemBuilder: (context) => [
-                  PopupMenuItem(
-                    enabled: false,
-                    child: Text(s.theme, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ),
-                  PopupMenuItem(value: 'theme_system', child: Text(s.system)),
-                  PopupMenuItem(value: 'theme_light', child: Text(s.light)),
-                  PopupMenuItem(value: 'theme_dark', child: Text(s.dark)),
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                    enabled: false,
-                    child: Text(s.font, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ),
-                  ...AppFont.values.map((font) => PopupMenuItem(
-                        value: 'font_${font.name}',
-                        child: Text(font.displayName),
-                      )),
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                    enabled: false,
-                    child: Text(s.language, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ),
-                  ...AppLanguage.values.map((lang) => PopupMenuItem(
-                        value: 'lang_${lang.name}',
-                        child: Text(lang.displayName),
-                  )),
-                  const PopupMenuDivider(),
-                  PopupMenuItem(
-                    enabled: false,
-                    child: Text(s.defaultView, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 12)),
-                  ),
-                  PopupMenuItem(value: 'tab_0', child: Text(s.day)),
-                  PopupMenuItem(value: 'tab_1', child: Text(s.month)),
-                  PopupMenuItem(value: 'tab_2', child: Text(s.year)),
-                ],
+                onPressed: () => _showSettings(context, s, isDarkMode),
               ),
             ],
           ),
