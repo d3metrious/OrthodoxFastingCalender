@@ -6,6 +6,7 @@ import 'package:fastingcalender/services/theme_service.dart';
 import 'package:fastingcalender/services/language_service.dart';
 import 'package:fastingcalender/utils/app_colors.dart';
 import 'package:fastingcalender/utils/translations.dart';
+import 'package:fastingcalender/widgets/year_view.dart';
 import 'package:flutter/material.dart';
 import 'package:table_calendar/table_calendar.dart';
 import 'package:intl/intl.dart';
@@ -68,7 +69,6 @@ class _CalendarPageState extends State<CalendarPage> {
         final String safeLocale = _getSafeLocale();
 
         return Scaffold(
-          // Removing the AppBar background and shadow makes the top row feel less cluttered
           appBar: AppBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
@@ -135,15 +135,15 @@ class _CalendarPageState extends State<CalendarPage> {
             children: [
               _buildMonthView(isDarkMode, s, safeLocale),
               _buildDayView(isDarkMode, s, safeLocale),
+              YearView(initialYear: _focusedDay.year, isDarkMode: isDarkMode),
             ],
           ),
           bottomNavigationBar: BottomNavigationBar(
             currentIndex: _currentIndex,
             onTap: _onTabTapped,
-            // Modern styling for the bottom bar
-            elevation: 0,
+            type: BottomNavigationBarType.fixed,
             backgroundColor: isDarkMode ? AppColors.fastingBackgroundDark : AppColors.fastingBackgroundLight,
-            selectedItemColor: isDarkMode ? AppColors.primary : AppColors.fastingBackgroundDark,
+            selectedItemColor: AppColors.primary,
             unselectedItemColor: isDarkMode ? Colors.white54 : Colors.black54,
             items: [
               BottomNavigationBarItem(
@@ -155,6 +155,11 @@ class _CalendarPageState extends State<CalendarPage> {
                 icon: const Icon(Icons.today_outlined),
                 activeIcon: const Icon(Icons.today),
                 label: s.day,
+              ),
+              BottomNavigationBarItem(
+                icon: const Icon(Icons.grid_view_outlined),
+                activeIcon: const Icon(Icons.grid_view),
+                label: s.year,
               ),
             ],
           ),
