@@ -110,7 +110,8 @@ class FastingService extends ChangeNotifier {
     '12-04': FastType.wineAndOil,  // Holy Great-Martyr Barbara
     '12-06': FastType.fishOilWine, // St Nicholas
     '12-09': FastType.wineAndOil,  // Conception of St Anna
-    '12-12': FastType.fishOilWine, // St Spyridon
+    '12-12': FastType.wineAndOil,  // St Spyridon (fish not allowed in stricter Nativity Fast period)
+    '12-15': FastType.wineAndOil,  // Holy Hieromartyr Eleutherios
     '12-17': FastType.wineAndOil,  // Prophet Daniel & the Three Holy Youths
   };
 
@@ -251,15 +252,15 @@ class FastingService extends ChangeNotifier {
                    (date.month == 12 && date.day <= 24);
     if (!inFast) return null;
 
-    // Dec 18–24: stricter — no fish even on weekends
-    if (date.month == 12 && date.day >= 11) {
+    // Dec 12–24: stricter — no fish even on weekends; max = wine & oil
+    if (date.month == 12 && date.day >= 12) {
       return switch (date.weekday) {
         DateTime.saturday || DateTime.sunday => FastType.wineAndOil,
         _                                    => FastType.strictFast,
       };
     }
 
-    // Nov 15 – Dec 17
+    // Nov 15 – Dec 11: fish on all non-fast days (Mon/Tue/Thu/Sat/Sun)
     return switch (date.weekday) {
       DateTime.wednesday || DateTime.friday => FastType.strictFast,
       DateTime.saturday  || DateTime.sunday => FastType.fishOilWine,
