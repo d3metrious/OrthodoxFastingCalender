@@ -44,6 +44,7 @@ class FastingService extends ChangeNotifier {
 
   static const Map<String, FastType> _feastExceptions = {
     // ── January ─────────────────────────────────────────────────────────────
+    '01-06': FastType.fishOilWine, // Theophany (Great Feast — if on Wed/Fri)
     '01-07': FastType.fishOilWine, // Synaxis of St John the Baptist
     '01-14': FastType.wineAndOil,  // Leave-taking of Theophany
     '01-16': FastType.wineAndOil,  // Veneration of Chains of Apostle Peter
@@ -75,12 +76,35 @@ class FastingService extends ChangeNotifier {
     '06-29': FastType.fishOilWine, // Feast of Apostles Peter & Paul
 
     // ── July ─────────────────────────────────────────────────────────────────
+    '07-01': FastType.wineAndOil,  // Holy Unmercenaries Cosmas & Damian of Rome
+    '07-08': FastType.wineAndOil,  // Holy Great-Martyr Prokopios
+    '07-17': FastType.wineAndOil,  // Holy Great-Martyr Marina
     '07-20': FastType.wineAndOil,  // Holy Prophet Elijah
+    '07-22': FastType.wineAndOil,  // Holy Myrrh-bearer Mary Magdalene
+
+    // ── August ───────────────────────────────────────────────────────────────
+    '08-15': FastType.fishOilWine, // Dormition of the Theotokos (Great Feast — after Dormition Fast)
+    '08-29': FastType.wineAndOil, // Beheading of St John the Baptist
+
+
+    // ── September ────────────────────────────────────────────────────────────
+    '09-08': FastType.fishOilWine, // Nativity of the Theotokos (Great Feast)
+    '09-09': FastType.wineAndOil, // Holy Ancestors Joachim and Anna
+    '09-23': FastType.wineAndOil, // Conception of St John the Baptist
+    '09-26': FastType.wineAndOil,  // Repose of St John the Theologian
+
+    // ── October ──────────────────────────────────────────────────────────────
+    '10-06': FastType.wineAndOil,  // Holy Apostle Thomas
+    '10-18': FastType.wineAndOil,  // Holy Apostle & Evangelist Luke
+    '10-23': FastType.wineAndOil,  // Holy Apostle James, Brother of the Lord
+    '10-26': FastType.wineAndOil,  // Holy Great-Martyr Demetrius of Thessaloniki
 
     // ── November ─────────────────────────────────────────────────────────────
     '11-08': FastType.wineAndOil,  // Feast of Archangels
-    '11-13': FastType.fishOilWine, // St John Chrysostom
+    '11-13': FastType.wineAndOil, // St John Chrysostom
     '11-21': FastType.fishOilWine, // Presentation of Theotokos (Great Feast)
+    '11-25': FastType.wineAndOil, // Catherine the Great of Alexandria
+
 
     // ── December ─────────────────────────────────────────────────────────────
     '12-04': FastType.wineAndOil,  // Holy Great-Martyr Barbara
@@ -213,8 +237,8 @@ class FastingService extends ChangeNotifier {
     if (date.day == 6) return FastType.fishOilWine; // Transfiguration
 
     return switch (date.weekday) {
-      DateTime.wednesday || DateTime.friday => FastType.strictFast,
-      _ => FastType.wineAndOil, // Fish not allowed (except Aug 6)
+      DateTime.saturday || DateTime.sunday => FastType.wineAndOil,
+      _ => FastType.strictFast, // Fish not allowed (except Aug 6)
     };
   }
 
@@ -228,7 +252,7 @@ class FastingService extends ChangeNotifier {
     if (!inFast) return null;
 
     // Dec 18–24: stricter — no fish even on weekends
-    if (date.month == 12 && date.day >= 18) {
+    if (date.month == 12 && date.day >= 11) {
       return switch (date.weekday) {
         DateTime.saturday || DateTime.sunday => FastType.wineAndOil,
         _                                    => FastType.strictFast,
@@ -239,7 +263,7 @@ class FastingService extends ChangeNotifier {
     return switch (date.weekday) {
       DateTime.wednesday || DateTime.friday => FastType.strictFast,
       DateTime.saturday  || DateTime.sunday => FastType.fishOilWine,
-      _                                     => FastType.wineAndOil,
+      _                                     => FastType.fishOilWine,
     };
   }
 
