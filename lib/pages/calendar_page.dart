@@ -68,67 +68,69 @@ class _CalendarPageState extends State<CalendarPage> {
         borderRadius: BorderRadius.vertical(top: Radius.circular(20)),
       ),
       builder: (context) {
+        // Wrap the content in a ListenableBuilder so the sheet itself reacts to changes
         return ListenableBuilder(
           listenable: Listenable.merge([themeService, languageService]),
           builder: (context, _) {
+            // Re-evaluating isDarkMode and s inside the builder for real-time refresh
+            final bool sheetDarkMode = Theme.of(context).brightness == Brightness.dark;
+            final sheetStrings = Translations.of(languageService.language);
+
             return SafeArea(
               child: Padding(
                 padding: const EdgeInsets.symmetric(vertical: 20),
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Text(s.settings, style: Theme.of(context).textTheme.titleLarge),
+                    Text(sheetStrings.settings, style: Theme.of(context).textTheme.titleLarge),
                     const SizedBox(height: 10),
                     const Divider(),
                     
-                    // Theme Setting
                     _buildSettingTile(
                       icon: Icons.palette_outlined,
-                      title: s.theme,
+                      title: sheetStrings.theme,
                       currentValue: themeService.themeMode.name.toUpperCase(),
                       onTap: () => _showOptions<ThemeMode>(
-                        context, s.theme, ThemeMode.values, (m) => themeService.setThemeMode(m),
-                        (m) => m.name.toUpperCase()
+                        context, sheetStrings.theme, ThemeMode.values, (m) => themeService.setThemeMode(m),
+                        (m) => m.name.toUpperCase(), sheetDarkMode
                       ),
                     ),
 
-                    // Font Setting
                     _buildSettingTile(
                       icon: Icons.font_download_outlined,
-                      title: s.font,
+                      title: sheetStrings.font,
                       currentValue: themeService.appFont.displayName,
                       onTap: () => _showOptions<AppFont>(
-                        context, s.font, AppFont.values, (f) => themeService.setFont(f),
-                        (f) => f.displayName
+                        context, sheetStrings.font, AppFont.values, (f) => themeService.setFont(f),
+                        (f) => f.displayName, sheetDarkMode
                       ),
                     ),
 
-                    // Language Setting
                     _buildSettingTile(
                       icon: Icons.language_outlined,
-                      title: s.language,
+                      title: sheetStrings.language,
                       currentValue: languageService.language.displayName,
                       onTap: () => _showOptions<AppLanguage>(
-                        context, s.language, AppLanguage.values, (l) => languageService.setLanguage(l),
-                        (l) => l.displayName
+                        context, sheetStrings.language, AppLanguage.values, (l) => languageService.setLanguage(l),
+                        (l) => l.displayName, sheetDarkMode
                       ),
                     ),
 
-                    // Default View Setting
                     _buildSettingTile(
                       icon: Icons.visibility_outlined,
-                      title: s.defaultView,
-                      currentValue: _currentIndexName(s),
+                      title: sheetStrings.defaultView,
+                      currentValue: _currentIndexName(sheetStrings),
                       onTap: () => _showOptions<int>(
-                        context, s.defaultView, [0, 1, 2], (i) => themeService.setDefaultTab(i),
-                        (i) => i == 0 ? s.day : (i == 1 ? s.month : s.year)
+                        context, sheetStrings.defaultView, [0, 1, 2], (i) => themeService.setDefaultTab(i),
+                        (i) => i == 0 ? sheetStrings.day : (i == 1 ? sheetStrings.month : sheetStrings.year),
+                        sheetDarkMode
                       ),
                     ),
                   ],
                 ),
               ),
             );
-          }
+          },
         );
       },
     );
@@ -165,10 +167,12 @@ class _CalendarPageState extends State<CalendarPage> {
     String title, 
     List<T> options, 
     Function(T) onSelect,
-    String Function(T) labelMapper
+    String Function(T) labelMapper,
+    bool isDarkMode
   ) {
     showModalBottomSheet(
       context: context,
+      backgroundColor: isDarkMode ? AppColors.fastingBackgroundDark : AppColors.fastingBackgroundLight,
       builder: (context) {
         return SafeArea(
           child: Column(
@@ -183,7 +187,7 @@ class _CalendarPageState extends State<CalendarPage> {
                 title: Text(labelMapper(opt)),
                 onTap: () {
                   onSelect(opt);
-                  Navigator.pop(context); // Close sub-menu
+                  Navigator.pop(context); // Close sub-menu immediately
                 },
               )).toList(),
             ],
