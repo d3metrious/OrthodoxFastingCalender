@@ -139,7 +139,15 @@ class _MonthSmallCalendar extends StatelessWidget {
                   color: fastType?.color.withOpacity(isDarkMode ? 0.8 : 0.6),
                   borderRadius: BorderRadius.circular(1),
                 ),
-                // Numbers removed for cleaner overview at this scale
+                child: Center(
+                  child: Text(
+                    '$dayNumber',
+                    style: TextStyle(
+                      fontSize: 6,
+                      color: isDarkMode ? Colors.white : Colors.black,
+                    ),
+                  ),
+                ),
               );
             },
           ),
