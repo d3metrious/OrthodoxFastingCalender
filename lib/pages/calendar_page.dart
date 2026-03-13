@@ -347,46 +347,88 @@ class _CalendarPageState extends State<CalendarPage> {
 
     final fastType = fastingService.getFastingType(day);
     if (fastType != null) {
+      final reason = expanded ? fastingService.getFastingReason(day) : null;
+      final (String periodText, String? feastText) =
+          reason != null ? Translations.getReasonText(reason, languageService.language) : ('', null);
+
       return Padding(
         padding: const EdgeInsets.all(16.0),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             Icon(
-              fastType.icon, 
-              color: fastType.color, 
+              fastType.icon,
+              color: fastType.color,
               size: expanded ? 80 : 40
             ),
             const SizedBox(height: 16),
             Text(
               Translations.getFastLabel(fastType, languageService.language),
-              style: expanded 
+              style: expanded
                 ? Theme.of(context).textTheme.headlineMedium?.copyWith(color: fastType.color, fontWeight: FontWeight.bold)
                 : Theme.of(context).textTheme.headlineSmall,
               textAlign: TextAlign.center,
             ),
             const SizedBox(height: 12),
             Text(
-              Translations.getFastDescription(fastType, languageService.language), 
+              Translations.getFastDescription(fastType, languageService.language),
               textAlign: TextAlign.center,
               style: expanded ? Theme.of(context).textTheme.titleMedium?.copyWith(color: isDarkMode ? Colors.white70 : Colors.black87) : null,
             ),
-            if (expanded) ...[
-              const SizedBox(height: 40),
-              Text(
-                s.fastingRules,
-                style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 18),
-              ),
-              const SizedBox(height: 8),
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 32.0),
-                child: Text(
-                  s.fastingEncouragement,
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(fontStyle: FontStyle.italic),
+            if (expanded && reason != null) ...[
+              const SizedBox(height: 24),
+              Container(
+                padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 14),
+                decoration: BoxDecoration(
+                  color: fastType.color.withOpacity(isDarkMode ? 0.15 : 0.08),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: fastType.color.withOpacity(0.35)),
+                ),
+                child: Column(
+                  children: [
+                    Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.church_outlined, size: 16, color: fastType.color),
+                        const SizedBox(width: 8),
+                        Flexible(
+                          child: Text(
+                            periodText,
+                            style: TextStyle(
+                              fontSize: 15,
+                              fontWeight: FontWeight.w600,
+                              color: fastType.color,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                      ],
+                    ),
+                    if (feastText != null) ...[
+                      const SizedBox(height: 6),
+                      Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Icon(Icons.auto_awesome, size: 14,
+                              color: isDarkMode ? Colors.amber.shade300 : Colors.amber.shade700),
+                          const SizedBox(width: 8),
+                          Flexible(
+                            child: Text(
+                              feastText,
+                              style: TextStyle(
+                                fontSize: 13,
+                                color: isDarkMode ? Colors.white70 : Colors.black54,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ],
                 ),
               ),
-            ]
+            ],
           ],
         ),
       );

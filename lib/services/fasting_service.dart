@@ -1,6 +1,15 @@
 import 'package:fastingcalender/models/fast_type.dart';
 import 'package:flutter/material.dart';
 
+/// Explains why a day has its fasting level.
+/// [periodKey] — liturgical season/rule key (localized via [Translations.getReasonPeriod]).
+/// [feastKey]  — MM-dd key if a feast day modified the base fast; null otherwise.
+class FastingReason {
+  final String periodKey;
+  final String? feastKey;
+  const FastingReason(this.periodKey, {this.feastKey});
+}
+
 class FastingService extends ChangeNotifier {
   Future<void> init() async {}
 
@@ -34,6 +43,87 @@ class FastingService extends ChangeNotifier {
     final key =
         '${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
     return _feastExceptions[key] ?? base;
+  }
+
+  /// Returns structured reasoning for why this day has its fasting level,
+  /// or null if the day has no fasting requirement.
+  FastingReason? getFastingReason(DateTime date) {
+    final d = _dateOnly(date);
+    final easter = _orthodoxEaster(d.year);
+
+    if (_isFastFree(d, easter)) return null;
+    if (_inCheesefareWeek(d, easter)) return const FastingReason('cheesefare');
+
+    final String? periodKey = _getPeriodKey(d, easter);
+    if (periodKey == null) return null;
+
+    // Period keys that are themselves named feasts — no separate feast annotation needed.
+    const feastPeriods = {
+      'lazarusSaturday', 'palmSunday', 'holyThursday', 'holyFriday',
+      'holySaturday', 'midPentecost', 'apodosis',
+      'theophanyEve', 'beheadingJohn', 'elevationCross',
+    };
+    if (feastPeriods.contains(periodKey)) return FastingReason(periodKey);
+
+    // Transfiguration (Aug 6) is hardcoded inside _dormitionFast, not in _feastExceptions.
+    if (d.month == 8 && d.day == 6) return FastingReason(periodKey, feastKey: '08-06');
+
+    // Check if a fixed-date feast exception modified this day.
+    final mmdd = '${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+    return FastingReason(periodKey, feastKey: _feastExceptions.containsKey(mmdd) ? mmdd : null);
+  }
+
+  /// Determines the liturgical period key for [d], matching the same priority
+  /// order used in [getFastingType]. Returns null if the day is not a fasting day.
+  String? _getPeriodKey(DateTime d, DateTime easter) {
+    // Great Lent + Holy Week
+    final cleanMonday  = _shift(easter, -48);
+    final holySaturday = _shift(easter, -1);
+    if (_inRange(d, cleanMonday, holySaturday)) {
+      if (_same(d, _shift(easter, -8))) return 'lazarusSaturday';
+      if (_same(d, _shift(easter, -7))) return 'palmSunday';
+      if (_same(d, _shift(easter, -6)) ||
+          _same(d, _shift(easter, -5)) ||
+          _same(d, _shift(easter, -4))) return 'holyWeek';
+      if (_same(d, _shift(easter, -3))) return 'holyThursday';
+      if (_same(d, _shift(easter, -2))) return 'holyFriday';
+      if (_same(d, holySaturday))       return 'holySaturday';
+      return 'greatLent';
+    }
+
+    // Pentecostarion — only Wed/Fri and the two special feasts are fasting days.
+    final pentStart = _shift(easter, 7);
+    final allSaints  = _shift(easter, 56);
+    if (_inRange(d, pentStart, allSaints)) {
+      if (_same(d, _shift(easter, 24))) return 'midPentecost';
+      if (_same(d, _shift(easter, 38))) return 'apodosis';
+      if (d.weekday == DateTime.wednesday || d.weekday == DateTime.friday) return 'pentecostarion';
+      return null; // Mon/Tue/Thu/Sat/Sun are not fasting days during Pentecostarion
+    }
+
+    // Apostles' Fast
+    final apostlesStart = _shift(easter, 57);
+    final apostlesEnd   = DateTime(d.year, 6, 28);
+    if (!apostlesStart.isAfter(apostlesEnd) && _inRange(d, apostlesStart, apostlesEnd)) {
+      return 'apostlesFast';
+    }
+
+    // Dormition Fast (Aug 1–14)
+    if (d.month == 8 && d.day >= 1 && d.day <= 14) return 'dormitionFast';
+
+    // Nativity Fast (Nov 15 – Dec 24)
+    if ((d.month == 11 && d.day >= 15) || (d.month == 12 && d.day <= 24)) return 'nativityFast';
+
+    // Fixed strict fast days
+    if (d.month == 1 && d.day == 5)  return 'theophanyEve';
+    if (d.month == 8 && d.day == 29) return 'beheadingJohn';
+    if (d.month == 9 && d.day == 14) return 'elevationCross';
+
+    // Weekly fast
+    if (d.weekday == DateTime.wednesday) return 'wednesday';
+    if (d.weekday == DateTime.friday)    return 'friday';
+
+    return null;
   }
 
   // ═══════════════════════════════════════════════════════════════════════════
